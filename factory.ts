@@ -1,69 +1,48 @@
-interface Factory {
-  withSugar(): Factory & SugarFactory;
-  withWhey(): Factory & WheyFactory;
-  withProtein(): Factory & ProteinFactory;
-}
-
-interface SugarFactory extends Factory {
-  getSugar(): number;
-}
-
-interface WheyFactory extends Factory {
-  getWhey(): boolean;
-}
-
-interface ProteinFactory extends Factory {
-  getProtein(): "A" | "B";
-}
-
-const getSugar = (): number => 0;
-const getProtein = (): "A" | "B" => "A";
-const getWhey = (): boolean => false;
-
-const withSugar = (): Factory & SugarFactory => ({ ...factory, getSugar });
-const withWhey = (): Factory & WheyFactory => ({ ...factory, getWhey })
-const withProtein = (): Factory & ProteinFactory => ({ ...factory, getProtein })
-
-const factory: Factory = {
-  withSugar,
-  withWhey,
-  withProtein,
-};
-
-factory.withProtein().withSugar().getSugar(); //?
-
-/**
-
 class Factory {
   withSugar(): Factory & { getSugar(): number } {
-    return new SugarFactory();
+    return null;
   }
   withWhey(): Factory & { getWhey(): boolean } {
-    return new WheyFactory();
+    return null;
   }
   withProtein(): Factory & { getProtein(): "A" | "B" } {
-    return new ProteinFactory();
+    return null;
   }
 }
 
-class SugarFactory extends Factory {
-  getSugar(): number {
-    return 0;
-  }
+type Constructor = new (...args: any[]) => {};
+
+function withSugar<TBase extends Constructor>(Base: TBase) {
+  return class SugarFactory extends Base {
+    getSugar(): number {
+      return 0;
+    }
+  };
 }
 
-class WheyFactory extends Factory {
-  getWhey(): boolean {
-    return false;
-  }
+function withWhey<TBase extends Constructor>(Base: TBase) {
+  return class WheyFactory extends Base {
+    getWhey(): boolean {
+      return false;
+    }
+  };
 }
 
-class ProteinFactory extends Factory {
-  getProtein(): "A" | "B" {
-    return "A";
-  }
+function withProtein<TBase extends Constructor>(Base: TBase) {
+  return class ProteinFactory extends Base {
+    getProtein(): "A" | "B" {
+      return "A";
+    }
+  };
 }
 
-new Factory().withWhey().withSugar(); //?
+const sugarWheyFactory = new (withSugar(withWhey(Factory)))();
+sugarWheyFactory.getSugar(); //?
+sugarWheyFactory.getWhey(); //?
 
-*/
+const wheySugarFactory = new (withWhey(withSugar(Factory)))();
+wheySugarFactory.getSugar(); //?
+wheySugarFactory.getWhey(); //?
+
+const proteinFactory = new (withProtein(Factory))();
+proteinFactory.getProtein() //?
