@@ -16,26 +16,33 @@
     <button bv-on:click="addTask(draft)" bv-bind:disabled="!draft.length">Add task</button>
     <button bv-on:click="deleteCompleted()" bv-bind:disabled="tasks.length == 0">Delete completed</button>
 
-    <ul bv-each="tasks">
+    <ul bv-for="tasks">
       <li bv-text="$it.name" bv-bind:class="$it.done ? 'done': null" bv-on:click="$it.done = !$it.done"></li>
     </ul>
   </div>
 </body>
+
 <script src="./bad-vue.js"></script>
 <script>
   const todo = {
+    // data
     draft: '',
+    tasks: [
+      { name: 'foo', done: true },
+      { name: 'bar', done: false }
+    ].map(proxy), // make 'tasks' reactive
+
+    // methods
     addTask: name => {
-      todo.tasks = [...todo.tasks, proxy({ name, done: false })];
+      // create a new reactive task
+      const newTask = proxy({ name, done: false })
+      todo.tasks = [...todo.tasks, newTask];
+      // clean draft
       todo.draft = '';
     },
     deleteCompleted: () => {
       todo.tasks = todo.tasks.filter(t => !t.done);
     },
-    tasks: [
-      { name: 'foo', done: true },
-      { name: 'bar', done: false }
-    ].map(proxy),
   };
   BadVue(app, todo);
 </script>

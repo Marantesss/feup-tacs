@@ -37,8 +37,10 @@ const directives = {
   for: (el, name, val, ctx) => {
     const items = call(val, ctx);
     if (!el.$for) {
+      // only gets the first child
       el.$for = el.children[0];
     }
+    // eliminate inner text
     el.innerText = "";
     for (let it of items) {
       const childNode = document.importNode(el.$for);
@@ -79,26 +81,29 @@ const walk = (node, bv) => {
 };
 
 // Proxy uses Object.defineProperty to intercept access to
-// all `q` data object properties.
+// all `bv` data object properties.
 const proxy = (bv) => {
   const deps = {}; // Dependent directives of the given data object
-  for (const name in bv) {
-    deps[name] = []; // Dependent directives of the given property
-    let prop = bv[name];
-    Object.defineProperty(bv, name, {
+
+  for (const property in bv) {
+    deps[property] = []; // Dependent directives of the given property
+    let prop = bv[property];
+
+    Object.defineProperty(bv, property, {
       get() {
         if ($dep) {
           // Property has been accessed.
           // Add current directive to the dependency list.
-          deps[name].push($dep);
+          deps[property].push($dep);
         }
         return prop;
       },
       set(value) {
         prop = value;
-        if (!name.startsWith("$")) {
-          for (const dep of deps[name]) {
-            dep(value);
+        // ignore $it or $parent properties
+        if (!property.startsWith("$")) {
+          for (const dep of deps[property]) {
+            dep();
           }
         }
       },
