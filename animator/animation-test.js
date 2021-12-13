@@ -6,6 +6,8 @@ var translation = { x: 200, y: 250 };
 var circle = {
     x: 100,
     y: 100,
+    vx: 0,
+    vy: 0,
     radius: 25,
     color: 'red',
     draw: function () {
@@ -20,9 +22,14 @@ var circle = {
 function translate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     circle.draw();
-    circle.x += (circle.x < translation.x ? 1 : (circle.x > translation.x ? -1 : 0));
-    circle.y += (circle.y < translation.y ? 1 : (circle.y > translation.y ? -1 : 0));
+    if (circle.x != translation.x)
+        circle.x += circle.vx;
+    if (circle.y != translation.y)
+        circle.y += circle.vy;
     raf = window.requestAnimationFrame(translate);
 }
+
+circle.vx = (translation.x - circle.x) / 100
+circle.vy = (translation.y - circle.y) / 100
 
 raf = window.requestAnimationFrame(translate);
