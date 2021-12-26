@@ -10,6 +10,7 @@ interface Props {
 const GeneratedCode = ({ value = tempValue }: Props) => {
   return (
     <AceEditor
+      className="border-2"
       readOnly
       value={value}
       width="100%"
