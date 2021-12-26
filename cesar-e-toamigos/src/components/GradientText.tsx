@@ -1,8 +1,9 @@
-type Props = {
-  text: string;
+interface Props {
+  text: string
+  children?: JSX.Element
 };
 
-export const GradientText = ({ text }: Props) => {
+export const GradientText = ({ text, children }: Props) => {
   return (
     <div className="p-10 min-h-screen flex items-center justify-center bg-cool-gray-700">
       <h1 className="text-9xl font-black text-white text-center">
@@ -10,6 +11,7 @@ export const GradientText = ({ text }: Props) => {
           {text}
         </span>
       </h1>
+      { children }
     </div>
   );
 };
