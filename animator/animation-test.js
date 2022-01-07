@@ -4,11 +4,23 @@ var raf;
 var starttime;
 var translation = { x: 200, y: 250, time: 2000 };
 
+var square = {
+    x: 100,
+    y: 100,
+    side: 25,
+    color: 'red',
+    draw: function () {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.side, this.side);
+        ctx.closePath();
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+};
+
 var circle = {
     x: 100,
     y: 100,
-    vx: 0,
-    vy: 0,
     radius: 25,
     color: 'red',
     draw: function () {
