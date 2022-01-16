@@ -1,37 +1,94 @@
 import * as P from "parsimmon";
 
-const makeObject = (pair) => {
-  const obj = {};
-  let [key, value] = pair;
-  obj[key] = value;
-  return obj;
-};
+type ShapeType = "square" | "circle";
+type AnimType = "lerp" | "slerp";
 
-const makeActualObject = (arr) => {
-  const keyframes = arr.filter(
-    (expression) => expression[0] === "Keyframe"
-  ); //?
-  const shapes = arr.filter(
-    (expression) => expression[0] === "Shape"
-  ); //?
-
-  arr //?
-  return arr
+interface ShapeObject {
+  id: string;
+  type: ShapeType;
+  color: string;
+  position: { x: number; y: number };
+  size: number;
+  animation: Array<string>;
 }
 
-const makePair = (key, valueParser) =>
-  P.seq(P.string(key).skip(P.seq(P.optWhitespace, P.string(":"), P.optWhitespace)), valueParser);
+interface KeyframeObject {
+  id: string;
+  type: AnimType;
+  color: string;
+  scale: number;
+  position: { x: number; y: number };
+  time: number;
+}
 
-const lang = P.createLanguage({
+interface Grammar {
+  expr: Array<ShapeObject | KeyframeObject>;
+
+  shapeExpr: ShapeObject;
+  keyframeExpr: KeyframeObject;
+
+  shapeSubExpr: Array<string>;
+  keyframeSubExpr: Array<string>;
+
+  idExpr: Array<string>;
+  shapeTypeExpr: Array<string>;
+  animTypeExpr: Array<string>;
+  colorExpr: Array<string>;
+  sizeExpr: Array<string>;
+  timeExpr: Array<string>;
+  positionExpr: Array<string>;
+  animationExpr: Array<string>;
+  scaleExpression: Array<string>;
+
+  id: string;
+  shapeType: ShapeType;
+  animType: AnimType;
+  color: string;
+  size: number;
+  time: number;
+  position: { x: number; y: number };
+  arr: Array<string>;
+
+  leftBracket: "[";
+  rightBracket: "]";
+}
+
+const makeShapeObject = ([object, body]): ShapeObject => {
+  if (object !== 'Shape') return
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as ShapeObject;
+};
+
+const makeKeyframeObject = ([object, body]): KeyframeObject => {
+  if (object !== 'Keyframe') return
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as KeyframeObject;
+};
+
+const makePair = (key, valueParser) =>
+  P.seq(
+    P.string(key).skip(P.seq(P.optWhitespace, P.string(":"), P.optWhitespace)),
+    valueParser
+  );
+
+const lang = P.createLanguage<Grammar>({
   expr: (l) =>
     P.alt(l.shapeExpr, l.keyframeExpr)
       .sepBy(P.optWhitespace)
-      .skip(P.optWhitespace)
-      .map(makeActualObject),
+      .skip(P.optWhitespace),
 
-  shapeExpr: (l) => makePair("Shape", l.shapeSubExpr.sepBy(P.whitespace)),
+  shapeExpr: (l) =>
+    makePair("Shape", l.shapeSubExpr.sepBy(P.whitespace)).map(makeShapeObject),
   keyframeExpr: (l) =>
-    makePair("Keyframe", l.keyframeSubExpr.sepBy(P.whitespace)),
+    makePair("Keyframe", l.keyframeSubExpr.sepBy(P.whitespace)).map(makeKeyframeObject),
 
   shapeSubExpr: (l) =>
     P.alt(
@@ -41,7 +98,7 @@ const lang = P.createLanguage({
       l.sizeExpr,
       l.positionExpr,
       l.animationExpr
-    ).map(makeObject),
+    ),
 
   keyframeSubExpr: (l) =>
     P.alt(
@@ -51,7 +108,7 @@ const lang = P.createLanguage({
       l.timeExpr,
       l.scaleExpression,
       l.positionExpr
-    ).map(makeObject),
+    ),
 
   // Key-Value expressions (syntax analysis)
   idExpr: (l) => makePair("id", l.id),
@@ -80,15 +137,18 @@ const lang = P.createLanguage({
       P.string("white").result("#ffffff"),
       P.string("black").result("#000000")
     ),
-  size: (l) => P.digits.skip(P.string("px")),
-  time: (l) => P.regexp(/[0-9]+/).skip(P.string("s")),
+  size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
+  time: (l) =>
+    P.regexp(/[0-9]+/)
+      .skip(P.string("s"))
+      .map((d) => parseFloat(d)),
 
   position: (l) =>
     l.leftBracket
       .trim(P.optWhitespace)
       .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
       .map(([x, y, ...rest]) => {
-        return { x, y };
+        return { x: parseInt(x), y: parseInt(y) };
       })
       .skip(l.rightBracket),
 
@@ -100,7 +160,6 @@ const lang = P.createLanguage({
 
   leftBracket: () => P.string("["),
   rightBracket: () => P.string("]"),
-  colon: () => P.string(":"),
 });
 
 const teste = `\
