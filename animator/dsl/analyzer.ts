@@ -1,42 +1,6 @@
 import * as P from "parsimmon";
-import { AnimType, KeyframeObject, language, ShapeObject, ShapeType } from "./language";
-
-class Shape implements ShapeObject {
-  id: string;
-  type: ShapeType;
-  color: string;
-  position: { x: number; y: number; };
-  size: number;
-  animation: string[];
-
-  constructor(shape: ShapeObject) {
-    this.id = shape.id
-    this.type = shape.type
-    this.color = shape.color
-    this.position = shape.position
-    this.size = shape.size
-    this.animation = shape.animation
-  }
-
-}
-
-class Keyframe implements KeyframeObject {
-  id: string;
-  type: AnimType;
-  color: string;
-  scale: number;
-  position: { x: number; y: number; };
-  time: number;
-  
-  constructor(keyframe: KeyframeObject) {
-    this.id = keyframe.id
-    this.type = keyframe.type
-    this.color = keyframe.color
-    this.scale = keyframe.scale
-    this.position = keyframe.position
-    this.time = keyframe.time
-  }
-}
+import { Shape, Keyframe, Circle, Square } from "./animator";
+import { language } from "./language";
 
 class Transpiler {
   private _language: P.Language = language;
@@ -53,22 +17,22 @@ class Transpiler {
   }
 
   constructor(code: string) {
-    this._code = code
+    this._code = code;
 
-    this._shapes = []
+    this._shapes = [];
     this._keyframes = new Map();
   }
 
   public parse(): void {
     const output = this._language.expr.tryParse(this._code);
-    const { shapes, keyframes } = output
+    const { shapes, keyframes } = output;
 
-    shapes.forEach(shape => {
-      this._shapes.push(new Shape(shape))
-    });
+    this._shapes = shapes.map((shape) =>
+      shape.type === "circle" ? new Circle(shape) : new Square(shape)
+    );
 
-    keyframes.forEach(keyframe => {
-      this._keyframes.set(keyframe.id, new Keyframe(keyframe))
+    keyframes.forEach((keyframe) => {
+      this._keyframes.set(keyframe.id, new Keyframe(keyframe));
     });
   }
 
@@ -131,3 +95,5 @@ transpiler.analyzeSemantics(); //?
 
 transpiler.shapes; //?
 transpiler.keyframes; //?
+
+export { transpiler }
