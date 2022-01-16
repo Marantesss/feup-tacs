@@ -1,106 +1,184 @@
-import * as P from 'parsimmon'
+import * as P from "parsimmon";
 
-class Expression {
-    execute(){};
-};
+type ShapeType = "square" | "circle";
+type AnimType = "lerp" | "slerp";
 
-class Shape extends Expression {
-
-    constructor(public id: string, public type: ShapeType, public color: Color, public position: {x: number, y: number},  public size: number, public animation: string[]){
-        super();
-    };
-
-};
-
-class Keyframe extends Expression {
-
-    constructor(public id: string, public type: AnimType, public color: Color, public position: {x: number, y: number}, public time: number){
-        super();
-    };
-
-};
-
-// Shape:
-//     Id: 1
-//     Type: square
-//     Color: red 
-//     Size: 25px
-
-// Keyframe:
-//     Order: 1
-//     Target: 1
-//     Type: ease-in
-//     Color: red    
-//     Time: 1s
-
-
-type Grammar = {
-    expr: Shape | Keyframe,
-
-    shapeExpr: Shape,
-    keyframeExpr: Keyframe
-
-    idExpr: string,
-    shapeTypeExpr: string,
-    animTypeExpr: string,
-    colorExpr: string,
-    sizeExpr: string,
-
-    id: string
-    shapeType: ShapeType,
-    animType: AnimType,
-    color: Color,
-    size: string,
+interface ShapeObject {
+  id: string;
+  type: ShapeType;
+  color: string;
+  position: { x: number; y: number };
+  size: number;
+  animation: Array<string>;
 }
 
-type ShapeType = 'square' | 'circle';
-type AnimType = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
-type Color = 'red' | 'green' | 'blue' | 'purple' | 'orange' | 'yellow' | 'pink' | 'white' | 'black';
+interface KeyframeObject {
+  id: string;
+  type: AnimType;
+  color: string;
+  scale: number;
+  position: { x: number; y: number };
+  time: number;
+}
 
-// P.string('red'), P.string('green'), P.string('blue'), P.string('purple'), P.string('orange'), P.string('yellow'), P.string('pink'), P.string('white'), P.string('black')
-const Lang = P.createLanguage({
-    expr: l => P.alt(l.shapeExpr, l.keyframeExpr).sepBy(P.optWhitespace).skip(P.end),
+interface LanguageOutput {
+  shapes: Array<ShapeObject>;
+  keyframes: Array<KeyframeObject>;
+}
 
-    shapeExpr: l => P.seq(P.string("Shape").skip(P.seq(l.colon, P.optWhitespace)), l.subExpr.sepBy(P.optWhitespace)), 
-    keyframeExpr: l => P.seq(P.string("Keyframe").skip(P.seq(l.colon, P.optWhitespace)), l.subExpr.sepBy(P.optWhitespace)), 
+interface Grammar {
+  expr: LanguageOutput;
 
+  shapeExpr: ShapeObject;
+  keyframeExpr: KeyframeObject;
 
-    subExpr: l => P.seq(l.identifier.skip(l.colon.trim(P.optWhitespace)), P.alt(l.value, l.arr)),
+  shapeSubExpr: Array<string>;
+  keyframeSubExpr: Array<string>;
 
-    identifier: () => P.regex(/^(?!Shape|Keyframe)[a-zA-z]*/), // match any word except Shape or Keyframe
-    
-    value: () => P.regexp(/[a-zA-Z0-9]+/),
-    arr: l => l.leftBracket.trim(P.optWhitespace)
-        .then(l.value.trim(P.optWhitespace).sepBy(P.string(',')))
-        .skip(l.rightBracket),
+  idExpr: Array<string>;
+  shapeTypeExpr: Array<string>;
+  animTypeExpr: Array<string>;
+  colorExpr: Array<string>;
+  sizeExpr: Array<string>;
+  timeExpr: Array<string>;
+  positionExpr: Array<string>;
+  animationExpr: Array<string>;
+  scaleExpression: Array<string>;
 
+  id: string;
+  shapeType: ShapeType;
+  animType: AnimType;
+  color: string;
+  size: number;
+  time: number;
+  position: { x: number; y: number };
+  arr: Array<string>;
 
-    leftBracket: () => P.string('['),
-    rightBracket: () => P.string(']'),
-    colon: () => P.string(':'),
+  leftBracket: "[";
+  rightBracket: "]";
+}
 
-    // idExpr: l => P.seq(P.string("id: "), l.id).map(([_,a]) => a),
-    // shapeTypeExpr: l => P.seq(P.string("type: "), l.shapeType).map(([_,a]) => a),
-    // animTypeExpr: l => P.seq(P.string("type: "), l.animType).map(([_,a]) => a),
-    // colorExpr: l => P.seq(P.string("color: "), l.color).map(([_,a]) => a),
-    // sizeExpr: l => P.seq(P.string("size: "), l.size, P.alt(P.string("px"))).map(([_,a,__]) => a),
-    // timeExpr: l => P.seq(P.string("time: "), l.time, P.alt(P.string("s"))).map(([_,a,__]) => a),
-    // positionExpr: l=> P.seq(P.string("position:"), P.newline, l.position).map(([_,__,a]) => a),
-    // animationExpr: l => P.seq(P.string("animation: "), P.alt(l.id).sepBy(P.whitespace)).map(([_,a]) => a),
+const makeShapeObject = ([object, body]): ShapeObject => {
+  if (object !== "Shape") return;
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as ShapeObject;
+};
 
-    // id: l => P.regexp(/[a-zA-Z0-9]+/),
-    // shapeType: l => P.alt(P.string('square'), P.string('circle')),
-    // animType: l => P.alt(P.string('linear'), P.string('ease-in'), P.string("ease-out"), P.string("ease-in-out")),
-    // color: l => P.alt(P.string('red'), P.string('green'), P.string('blue'), P.string('purple'), P.string('orange'), P.string('yellow'), P.string('pink'), P.string('white'), P.string('black')),
-    // size: l => P.digits,
-    // order: l => P.regexp(/[0-9]+/), //TODO: cenas repetidas, dar cleanup depois
-    // target: l=> P.regexp(/[a-zA-Z0-9]+/),
-    // time: l => P.regexp(/[0-9]+/),
-    // position: l => P.seq(P.string("x: "), P.digits, P.newline, P.string("y: "), P.digits).map(([_,a,__,___,b]) => [a,b]),
+const makeKeyframeObject = ([object, body]): KeyframeObject => {
+  if (object !== "Keyframe") return;
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as KeyframeObject;
+};
+
+const makeLanguageOutput =(result: Array<any>) => {
+  const shapes = result.filter(({ scale }) => !scale);
+  const keyframes = result.filter(({ scale }) => scale);
+
+  return {
+    shapes,
+    keyframes,
+  };
+}
+
+const makePair = (key, valueParser) =>
+  P.seq(
+    P.string(key).skip(P.seq(P.optWhitespace, P.string(":"), P.optWhitespace)),
+    valueParser
+  );
+
+const language = P.createLanguage<Grammar>({
+  expr: (l) =>
+    P.alt(l.shapeExpr, l.keyframeExpr)
+      .sepBy(P.optWhitespace)
+      .skip(P.optWhitespace)
+      .map(makeLanguageOutput),
+
+  shapeExpr: (l) =>
+    makePair("Shape", l.shapeSubExpr.sepBy(P.whitespace)).map(makeShapeObject),
+  keyframeExpr: (l) =>
+    makePair("Keyframe", l.keyframeSubExpr.sepBy(P.whitespace)).map(
+      makeKeyframeObject
+    ),
+
+  shapeSubExpr: (l) =>
+    P.alt(
+      l.idExpr,
+      l.shapeTypeExpr,
+      l.colorExpr,
+      l.sizeExpr,
+      l.positionExpr,
+      l.animationExpr
+    ),
+
+  keyframeSubExpr: (l) =>
+    P.alt(
+      l.idExpr,
+      l.animTypeExpr,
+      l.colorExpr,
+      l.timeExpr,
+      l.scaleExpression,
+      l.positionExpr
+    ),
+
+  // Key-Value expressions (syntax analysis)
+  idExpr: (l) => makePair("id", l.id),
+  shapeTypeExpr: (l) => makePair("type", l.shapeType),
+  animTypeExpr: (l) => makePair("type", l.animType),
+  colorExpr: (l) => makePair("color", l.color),
+  sizeExpr: (l) => makePair("size", l.size),
+  timeExpr: (l) => makePair("time", l.time),
+  positionExpr: (l) => makePair("position", l.position),
+  animationExpr: (l) => makePair("animation", l.arr),
+  scaleExpression: (l) => makePair("scale", l.id),
+
+  id: (l) => P.regexp(/[a-zA-Z0-9]+/),
+  shapeType: (l) => P.alt(P.string("square"), P.string("circle")),
+  animType: (l) => P.alt(P.string("lerp"), P.string("slerp")),
+  color: (l) =>
+    P.alt(
+      P.regexp(/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/i),
+      P.string("red").result("#ff0000"),
+      P.string("green").result("#00ff00"),
+      P.string("blue").result("#0000ff"),
+      P.string("purple").result("#6a0dad"),
+      P.string("orange").result("#ffa500"),
+      P.string("yellow").result("#ffff00"),
+      P.string("pink").result("#ffc0cb"),
+      P.string("white").result("#ffffff"),
+      P.string("black").result("#000000")
+    ),
+  size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
+  time: (l) =>
+    P.regexp(/[0-9]+/)
+      .skip(P.string("s"))
+      .map((d) => parseFloat(d)),
+
+  position: (l) =>
+    l.leftBracket
+      .trim(P.optWhitespace)
+      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
+      .map(([x, y, ...rest]) => {
+        return { x: parseInt(x), y: parseInt(y) };
+      })
+      .skip(l.rightBracket),
+
+  arr: (l) =>
+    l.leftBracket
+      .trim(P.optWhitespace)
+      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
+      .skip(l.rightBracket),
+
+  leftBracket: () => P.string("["),
+  rightBracket: () => P.string("]"),
 });
-
-// Lang.positionExpr.tryParse("position:\nx: 1\ny: 2") //?
-//TODO: identation
 
 const teste = `\
 Shape:
@@ -121,74 +199,21 @@ animation: [   1 ,     2     ]
 
 Keyframe:
 id: 1
-type: linear
+type: slerp
 color: red
+scale: 1
 position: [0,1]
 time: 2s
-`
 
-const syntax = Lang.expr.tryParse(teste); //?
+Keyframe:
+id: 2
+type: lerp
+color: green
+scale: 2
+position: [5,2]
+time: 5s
+`;
 
-const semanticAnalysis = (syntax: Array<Array<any>>) => {
-    const keyframesSyntax = syntax.filter(expression => expression[0] === 'Keyframe') //?
-    const shapeSyntax = syntax.filter(expression => expression[0] === 'Shape') //?
+language.expr.tryParse(teste) //?
 
-    const buildKeyframe = ([name, body]) => {
-        if (name !== 'Keyframe') {
-            throw new Error('Keyframe expression is not a keyframe')
-        } 
-        // build object from array
-        const object = { name };
-        body.forEach(pair => {
-          const [key, value] = pair;
-          object[key] = value;
-        })
-
-        object //?
-
-        const {
-            id, type, color, position: [x, y], time
-        } = object
-
-        // TODO filter what's mandatory or not
-        if (!id || !type || !color || !x || !y || !time) {
-            throw new Error('Something is not present')
-        }
-
-        return new Keyframe(id, type, color, {x, y}, time) //?
-
-    }
-
-    const buildShape = ([name, body]) => {
-        if (name !== 'Shape') {
-            throw new Error('Shape expression is not a shape')
-        } 
-        // build object from array
-        const object = { name };
-        body.forEach(pair => {
-          const [key, value] = pair;
-          object[key] = value;
-        })
-
-        object //?
-
-        const {
-            id, type, color, position: [x, y], size, animation
-        } = object
-
-        // TODO filter what's mandatory or not
-        if (!id || !type || !color || !x || !y || !size || !animation) {
-            throw new Error('Something is not present')
-        }
-
-        return new Shape(id, type, color, {x, y}, size, animation) //?
-
-    }
-
-    const keyframeList = keyframesSyntax.map(e => buildKeyframe(e))
-    keyframeList //?
-    const shapeList = shapeSyntax.map(e => buildShape(e))
-    shapeList //?
-}
-
-semanticAnalysis(syntax)
+export { ShapeObject, KeyframeObject, ShapeType, AnimType, language };
