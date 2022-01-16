@@ -125,4 +125,40 @@ position: [0,1]
 time: 2s
 `
 
-Lang.expr.tryParse(teste); //?
+const syntax = Lang.expr.tryParse(teste); //?
+
+const semanticAnalysis = (syntax: Array<Array<any>>) => {
+    const keyframesSyntax = syntax.filter(expression => expression[0] === 'Keyframe') //?
+    const shapeSyntax = syntax.filter(expression => expression[0] === 'Shape') //?
+
+    const buildKeyframe = ([name, body]) => {
+        if (name !== 'Keyframe') {
+            throw new Error('Keyframe expression is not a keyframe')
+        } 
+        // build object from array
+        const object = { name };
+        body.forEach(pair => {
+          const [key, value] = pair;
+          object[key] = value;
+        })
+
+        object //?
+
+        const {
+            id, type, color, position: [x, y], time
+        } = object
+
+        // TODO filter what's mandatory or not
+        if (!id || !type || !color || !x || !y || !time) {
+            throw new Error('Something is not present')
+        }
+
+        return new Keyframe(id, type, color, {x, y}, time) //?
+
+    }
+
+    const keyframeList = keyframesSyntax.map(e => buildKeyframe(e))
+    keyframeList //?
+}
+
+semanticAnalysis(syntax)
