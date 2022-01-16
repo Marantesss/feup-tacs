@@ -109,11 +109,13 @@ type: circle
 color: red
 position:[0,0]
 size: 20px
+animation: [1]
 
 Shape:
 id: quadrado1
 type: square
 color: purple
+position:[1,2]
 size: 132px
 animation: [   1 ,     2     ]
 
@@ -157,8 +159,36 @@ const semanticAnalysis = (syntax: Array<Array<any>>) => {
 
     }
 
+    const buildShape = ([name, body]) => {
+        if (name !== 'Shape') {
+            throw new Error('Shape expression is not a shape')
+        } 
+        // build object from array
+        const object = { name };
+        body.forEach(pair => {
+          const [key, value] = pair;
+          object[key] = value;
+        })
+
+        object //?
+
+        const {
+            id, type, color, position: [x, y], size, animation
+        } = object
+
+        // TODO filter what's mandatory or not
+        if (!id || !type || !color || !x || !y || !size || !animation) {
+            throw new Error('Something is not present')
+        }
+
+        return new Shape(id, type, color, {x, y}, size, animation) //?
+
+    }
+
     const keyframeList = keyframesSyntax.map(e => buildKeyframe(e))
     keyframeList //?
+    const shapeList = shapeSyntax.map(e => buildShape(e))
+    shapeList //?
 }
 
 semanticAnalysis(syntax)
