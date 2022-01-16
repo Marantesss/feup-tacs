@@ -59,17 +59,25 @@ type Color = 'red' | 'green' | 'blue' | 'purple' | 'orange' | 'yellow' | 'pink' 
 
 // P.string('red'), P.string('green'), P.string('blue'), P.string('purple'), P.string('orange'), P.string('yellow'), P.string('pink'), P.string('white'), P.string('black')
 const Lang = P.createLanguage({
-    expr: l => P.alt(P.seq(P.string("Shape:"), P.newline, l.shapeExpr).map(([_,__,a]) => a),
-                    P.seq(P.string("Keyframe:"), P.newline, l.keyframeExpr).map(([_,__,a]) => a)).sepBy(P.newline),
+    expr: l => P.alt(l.shapeExpr, l.keyframeExpr).sepBy(P.optWhitespace).skip(P.end),
 
-    shapeExpr: l => P.alt(l.subExpr).sepBy(P.newline).map(([a,b,c,d,e,f]) => new Shape(a,b,c,d,e,f)).skip(l.End), 
-    keyframeExpr: l => P.alt(l.subExpr).sepBy(P.newline).map(([a,b,c,d,e]) => new Keyframe(a,b,c,d,e)).skip(l.End), 
+    shapeExpr: l => P.seq(P.string("Shape").skip(P.seq(l.colon, P.optWhitespace)), l.subExpr.sepBy(P.optWhitespace)), 
+    keyframeExpr: l => P.seq(P.string("Keyframe").skip(P.seq(l.colon, P.optWhitespace)), l.subExpr.sepBy(P.optWhitespace)), 
 
 
-    subExpr: l => P.seq(l.identifier.trim(P.optWhitespace).skip(P.string(":").trim(P.optWhitespace)), l.value),
+    subExpr: l => P.seq(l.identifier.skip(l.colon.trim(P.optWhitespace)), P.alt(l.value, l.arr)),
 
-    identifier: l => P.alt(P.string("id"), P.string("type"), P.string("color"), P.string("position"), P.string("size"), P.string("time"), P.string("animation"), P.string("x"), P.string("y")),
-    value: l => P.alt(l.subExpr, P.regexp(/[a-zA-Z0-9]+/)), 
+    identifier: () => P.regex(/^(?!Shape|Keyframe)[a-zA-z]*/), // match any word except Shape or Keyframe
+    
+    value: () => P.regexp(/[a-zA-Z0-9]+/),
+    arr: l => l.leftBracket.trim(P.optWhitespace)
+        .then(l.value.trim(P.optWhitespace).sepBy(P.string(',')))
+        .skip(l.rightBracket),
+
+
+    leftBracket: () => P.string('['),
+    rightBracket: () => P.string(']'),
+    colon: () => P.string(':'),
 
     // idExpr: l => P.seq(P.string("id: "), l.id).map(([_,a]) => a),
     // shapeTypeExpr: l => P.seq(P.string("type: "), l.shapeType).map(([_,a]) => a),
@@ -88,23 +96,18 @@ const Lang = P.createLanguage({
     // order: l => P.regexp(/[0-9]+/), //TODO: cenas repetidas, dar cleanup depois
     // target: l=> P.regexp(/[a-zA-Z0-9]+/),
     // time: l => P.regexp(/[0-9]+/),
-    position: l=> P.seq(P.string("x: "), P.digits, P.newline, P.string("y: "), P.digits).map(([_,a,__,___,b]) => [a,b]),
-
-    NL: () => P.alt(P.string("\r\n"), P.oneOf("\r\n")),
-
-    End: l => P.alt(l.NL, P.eof)
+    // position: l => P.seq(P.string("x: "), P.digits, P.newline, P.string("y: "), P.digits).map(([_,a,__,___,b]) => [a,b]),
 });
 
 // Lang.positionExpr.tryParse("position:\nx: 1\ny: 2") //?
+//TODO: identation
 
- //TODO: identation
-
-const teste = `Shape:
+const teste = `\
+Shape:
 id: ola
 type: circle
 color: red
-position: x: 0
-y: 0
+position:[0,0]
 size: 20px
 
 Shape:
@@ -112,14 +115,14 @@ id: quadrado1
 type: square
 color: purple
 size: 132px
+animation: [   1 ,     2     ]
 
 Keyframe:
 id: 1
 type: linear
 color: red
-position:
-x: 1
-y: 3
-time: 2s`
+position: [0,1]
+time: 2s
+`
 
 Lang.expr.tryParse(teste); //?
