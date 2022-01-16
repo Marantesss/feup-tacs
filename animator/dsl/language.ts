@@ -1,241 +1,185 @@
 import * as P from "parsimmon";
 
-class Expression {
-  execute() {}
-}
+type ShapeType = "square" | "circle";
+type AnimType = "lerp" | "slerp";
 
-// TODO figure out whats not mandatory
 interface ShapeObject {
   id: string;
   type: ShapeType;
-  color: Color;
+  color: string;
   position: { x: number; y: number };
   size: number;
   animation: Array<string>;
 }
 
-class Shape extends Expression implements ShapeObject {
-  constructor(
-    public id: string,
-    public type: ShapeType,
-    public color: Color,
-    public position: { x: number; y: number },
-    public size: number,
-    public animation: Array<string>
-  ) {
-    super();
-  }
-}
-
 interface KeyframeObject {
   id: string;
   type: AnimType;
-  color: Color;
+  color: string;
   scale: number;
   position: { x: number; y: number };
   time: number;
 }
-class Keyframe extends Expression implements KeyframeObject {
-  constructor(
-    public id: string,
-    public type: AnimType,
-    public color: Color,
-    public scale: number,
-    public position: { x: number; y: number },
-    public time: number
-  ) {
-    super();
-  }
+
+interface LanguageOutput {
+  shapes: Array<ShapeObject>;
+  keyframes: Array<KeyframeObject>;
 }
 
-type ShapeType = "square" | "circle";
-type AnimType = "lerp" | "slerp";
-type Color =
-  | "red"
-  | "green"
-  | "blue"
-  | "purple"
-  | "orange"
-  | "yellow"
-  | "pink"
-  | "white"
-  | "black";
+interface Grammar {
+  expr: LanguageOutput;
 
-class Transpiler {
-  private _language: P.Language;
+  shapeExpr: ShapeObject;
+  keyframeExpr: KeyframeObject;
 
-  private _code: string;
-  private _tokens: Array<any>;
+  shapeSubExpr: Array<string>;
+  keyframeSubExpr: Array<string>;
 
-  private _shapes: Array<Shape>;
-  private _keyframes: Map<string, Keyframe>;
+  idExpr: Array<string>;
+  shapeTypeExpr: Array<string>;
+  animTypeExpr: Array<string>;
+  colorExpr: Array<string>;
+  sizeExpr: Array<string>;
+  timeExpr: Array<string>;
+  positionExpr: Array<string>;
+  animationExpr: Array<string>;
+  scaleExpression: Array<string>;
 
-  public get shapes() {
-    return this._shapes;
-  }
-  public get keyframes() {
-    return this._keyframes;
-  }
+  id: string;
+  shapeType: ShapeType;
+  animType: AnimType;
+  color: string;
+  size: number;
+  time: number;
+  position: { x: number; y: number };
+  arr: Array<string>;
 
-  constructor(code: string) {
-    this._code = code;
-    this._tokens = [];
-    this._shapes = [];
-    this._keyframes = new Map();
-    this._language = P.createLanguage<{
-      expr: Array<Array<any>>;
+  leftBracket: "[";
+  rightBracket: "]";
+}
 
-      shapeExpr: Array<any>;
-      keyframeExpr: Array<any>;
+const makeShapeObject = ([object, body]): ShapeObject => {
+  if (object !== "Shape") return;
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as ShapeObject;
+};
 
-      subExpr: Array<any>;
+const makeKeyframeObject = ([object, body]): KeyframeObject => {
+  if (object !== "Keyframe") return;
+  const obj = {};
+  body.forEach(([key, value]) => {
+    obj[key] = value;
+    return obj;
+  });
+  return obj as KeyframeObject;
+};
 
-      identifier: string;
-      value: string | number;
-      arr: Array<string | number>;
+const makeLanguageOutput =(result: Array<any>) => {
+  const shapes = result.filter(({ scale }) => !scale);
+  const keyframes = result.filter(({ scale }) => scale);
 
-      leftBracket: "[";
-      rightBracket: "]";
-      colon: ":";
-    }>({
-      expr: (l) =>
-        P.alt(l.shapeExpr, l.keyframeExpr).sepBy(P.optWhitespace).skip(P.end),
+  return {
+    shapes,
+    keyframes,
+  };
+}
 
-      shapeExpr: (l) =>
-        P.seq(
-          P.string("Shape").skip(P.seq(l.colon, P.optWhitespace)),
-          l.subExpr.sepBy(P.optWhitespace)
-        ),
-      keyframeExpr: (l) =>
-        P.seq(
-          P.string("Keyframe").skip(P.seq(l.colon, P.optWhitespace)),
-          l.subExpr.sepBy(P.optWhitespace)
-        ),
+const makePair = (key, valueParser) =>
+  P.seq(
+    P.string(key).skip(P.seq(P.optWhitespace, P.string(":"), P.optWhitespace)),
+    valueParser
+  );
 
-      subExpr: (l) =>
-        P.seq(
-          l.identifier.skip(l.colon.trim(P.optWhitespace)),
-          P.alt(l.value, l.arr)
-        ),
+const language = P.createLanguage<Grammar>({
+  expr: (l) =>
+    P.alt(l.shapeExpr, l.keyframeExpr)
+      .sepBy(P.optWhitespace)
+      .skip(P.optWhitespace)
+      .map(makeLanguageOutput),
 
-      identifier: () => P.regex(/^(?!Shape|Keyframe)[a-zA-z]*/), // match any word except Shape or Keyframe
+  shapeExpr: (l) =>
+    makePair("Shape", l.shapeSubExpr.sepBy(P.whitespace)).map(makeShapeObject),
+  keyframeExpr: (l) =>
+    makePair("Keyframe", l.keyframeSubExpr.sepBy(P.whitespace)).map(
+      makeKeyframeObject
+    ),
 
-      value: () =>
-        P.regexp(/[a-zA-Z0-9]+/).map((value) =>
-          isNaN(parseInt(value)) ? value : parseInt(value)
-        ),
-      arr: (l) =>
-        l.leftBracket
-          .trim(P.optWhitespace)
-          .then(l.value.trim(P.optWhitespace).sepBy(P.string(",")))
-          .skip(l.rightBracket),
+  shapeSubExpr: (l) =>
+    P.alt(
+      l.idExpr,
+      l.shapeTypeExpr,
+      l.colorExpr,
+      l.sizeExpr,
+      l.positionExpr,
+      l.animationExpr
+    ),
 
-      leftBracket: () => P.string("["),
-      rightBracket: () => P.string("]"),
-      colon: () => P.string(":"),
-    });
-  }
+  keyframeSubExpr: (l) =>
+    P.alt(
+      l.idExpr,
+      l.animTypeExpr,
+      l.colorExpr,
+      l.timeExpr,
+      l.scaleExpression,
+      l.positionExpr
+    ),
 
-  public parse(): void {
-    this._tokens = this._language.expr.tryParse(this._code);
-  }
+  // Key-Value expressions (syntax analysis)
+  idExpr: (l) => makePair("id", l.id),
+  shapeTypeExpr: (l) => makePair("type", l.shapeType),
+  animTypeExpr: (l) => makePair("type", l.animType),
+  colorExpr: (l) => makePair("color", l.color),
+  sizeExpr: (l) => makePair("size", l.size),
+  timeExpr: (l) => makePair("time", l.time),
+  positionExpr: (l) => makePair("position", l.position),
+  animationExpr: (l) => makePair("animation", l.arr),
+  scaleExpression: (l) => makePair("scale", l.id),
 
-  private buildKeyframe([name, body]): Keyframe {
-    if (name !== "Keyframe") {
-      throw new Error("Keyframe expression is not a keyframe");
-    }
-    // build object from array
-    const object = {};
-    body.forEach((pair) => {
-      const [key, value] = pair;
-      if (key === "position") {
-        object[key] = { x: value[0], y: value[1] };
-      } else {
-        object[key] = value;
-      }
-    });
+  id: (l) => P.regexp(/[a-zA-Z0-9]+/),
+  shapeType: (l) => P.alt(P.string("square"), P.string("circle")),
+  animType: (l) => P.alt(P.string("lerp"), P.string("slerp")),
+  color: (l) =>
+    P.alt(
+      P.regexp(/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/i),
+      P.string("red").result("#ff0000"),
+      P.string("green").result("#00ff00"),
+      P.string("blue").result("#0000ff"),
+      P.string("purple").result("#6a0dad"),
+      P.string("orange").result("#ffa500"),
+      P.string("yellow").result("#ffff00"),
+      P.string("pink").result("#ffc0cb"),
+      P.string("white").result("#ffffff"),
+      P.string("black").result("#000000")
+    ),
+  size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
+  time: (l) =>
+    P.regexp(/[0-9]+/)
+      .skip(P.string("s"))
+      .map((d) => parseFloat(d)),
 
-    const {
-      id,
-      type,
-      color,
-      scale,
-      position: { x, y },
-      time,
-    } = object as KeyframeObject; //?
-
-    // TODO filter what's mandatory or not
-    if (!id || !type || !color || !scale || isNaN(x) || isNaN(y) || !time) {
-      throw new Error("Something is not present");
-    }
-
-    return new Keyframe(id, type, color, scale, { x, y }, time);
-  }
-
-  private buildShape([name, body]): Shape {
-    if (name !== "Shape") {
-      throw new Error("Shape expression is not a shape");
-    }
-    // build object from array
-    const object = {};
-    body.forEach((pair) => {
-      const [key, value] = pair;
-      if (key === "position") {
-        object[key] = { x: value[0], y: value[1] };
-      } else {
-        object[key] = value;
-      }
-    });
-
-    const {
-      id,
-      type,
-      color,
-      position: { x, y },
-      size,
-      animation,
-    } = object as ShapeObject;
-
-    // TODO filter what's mandatory or not
-    if (!id || !type || !color || isNaN(x) || isNaN(y) || !size || !animation) {
-      throw new Error("Something is not present");
-    }
-
-    return new Shape(id, type, color, { x, y }, size, animation);
-  }
-
-  public analyzeSyntax(): void {
-    const keyframesSyntax = this._tokens.filter(
-      (expression) => expression[0] === "Keyframe"
-    ); //?
-    const shapeSyntax = this._tokens.filter(
-      (expression) => expression[0] === "Shape"
-    ); //?
-
-    keyframesSyntax.forEach((keyframe) => {
-      const kf = this.buildKeyframe(keyframe);
-      this._keyframes.set(kf.id, kf);
-    });
-    this._shapes = shapeSyntax.map((shape) => this.buildShape(shape));
-  }
-
-  public analyzeSemantics(): void {
-    // ERROR: make sure that referenced animations were declared
-    this._shapes.forEach((shape) =>
-      shape.animation.forEach((animationId) => {
-        if (!this._keyframes.has(animationId)) {
-          throw new Error(
-            `Animation ${animationId} referenced in shape ${shape.id} was never declared`
-          );
-        }
+  position: (l) =>
+    l.leftBracket
+      .trim(P.optWhitespace)
+      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
+      .map(([x, y, ...rest]) => {
+        return { x: parseInt(x), y: parseInt(y) };
       })
-    );
+      .skip(l.rightBracket),
 
-    // TODO WARNING: check if all animations are being used
-  }
-}
+  arr: (l) =>
+    l.leftBracket
+      .trim(P.optWhitespace)
+      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
+      .skip(l.rightBracket),
 
-//TODO: identation
+  leftBracket: () => P.string("["),
+  rightBracket: () => P.string("]"),
+});
+
 const teste = `\
 Shape:
 id: ola
@@ -270,11 +214,6 @@ position: [5,2]
 time: 5s
 `;
 
-const transpiler = new Transpiler(teste);
+language.expr.tryParse(teste) //?
 
-transpiler.parse(); //?
-transpiler.analyzeSyntax(); //?
-transpiler.analyzeSemantics(); //?
-
-transpiler.shapes; //?
-transpiler.keyframes; //?
+export { ShapeObject, KeyframeObject, ShapeType, AnimType, language };
