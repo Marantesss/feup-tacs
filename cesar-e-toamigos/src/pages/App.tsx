@@ -12,6 +12,7 @@ const App = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [annotation, setAnnotation] = useState<{}>({});
 
   const compileCode = () => {
     setIsError(false);
@@ -20,10 +21,20 @@ const App = () => {
       transpiler.execute(code);
       setIsSuccess(true);
       setErrorMessage("");
+      setAnnotation({})
     } catch (e) {
       setIsError(true);
       setErrorMessage(e.message);
-      console.error(e);
+      setAnnotation(
+        e.result.index
+          ? {
+              row: e.result.index.line - 1 ,
+              column: e.result.index.column - 1,
+              type: "error",
+              text: `Expected one of ${e.result.expected}`,
+            }
+          : {}
+      );
     }
   };
 
@@ -38,18 +49,20 @@ const App = () => {
       <div className="row-span-2">
         <Editor
           code={code}
-          setCode={setCode}
           isError={isError}
           isSuccess={isSuccess}
-          setIsError={setIsError}
-          setIsSuccess={setIsSuccess}
           compileCode={compileCode}
           onEditorChange={onEditorChange}
           errorMessage={errorMessage}
+          annotation={annotation}
         />
       </div>
       <div className="row-span-1">
-        <Viewer shapes={transpiler.shapes} animations={transpiler.keyframes} shouldRun={isSuccess} />
+        <Viewer
+          shapes={transpiler.shapes}
+          animations={transpiler.keyframes}
+          shouldRun={isSuccess}
+        />
       </div>
       <div className="row-span-1">
         <GeneratedCode />

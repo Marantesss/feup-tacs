@@ -3,14 +3,12 @@ import cx from "classnames";
 
 const Editor = ({
   code,
-  setCode,
   isError,
-  setIsError,
   isSuccess,
-  setIsSuccess,
   compileCode,
   onEditorChange,
   errorMessage,
+  annotation,
 }) => {
   const getButtonContent = () =>
     !isError && !isSuccess ? "Compile" : isError ? "Failed" : "Success";
@@ -43,6 +41,7 @@ const Editor = ({
         name="ace-code-editor"
         onChange={onEditorChange}
         value={code}
+        annotations={[annotation]}
         editorProps={{ $blockScrolling: true }}
       />
       <AceEditor
