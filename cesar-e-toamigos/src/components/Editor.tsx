@@ -1,23 +1,7 @@
-import { useEffect, useState } from "react";
 import AceEditor from "react-ace";
 import cx from "classnames";
 
-const Editor = () => {
-  const [code, setCode] = useState<string>("");
-  const [isError, setIsError] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-  const compileCode = () => {
-    setIsError(false);
-    setIsSuccess(false);
-    // TODO: Change for Parsimmon compile
-    console.log(code)
-    if (code.length > 10) {
-      setIsError(true);
-    } else {
-      setIsSuccess(true);
-    }
-  };
+const Editor = ({ code, setCode, isError, setIsError, isSuccess, setIsSuccess, compileCode}) => {
 
   const getButtonContent = () =>
     (!isError && !isSuccess)
