@@ -83,7 +83,7 @@ abstract class Shape implements ShapeObject {
       }
     }
 
-    return progress;
+    return { currentAnimation, progress };
   }
 }
 
@@ -105,17 +105,16 @@ class Circle extends Shape {
     ctx.fill();
   }
 
-  public update(now, animations: Map<String, Keyframe>): number {
-    const currentAnimation = animations.get(this.animation[this.activeKeyframe]);
-    const progress = super.update(now, animations);
+  public update(now, animations: Map<String, Keyframe>) {
+    const { currentAnimation, progress } = super.update(now, animations);
 
-    if (progress <= 1) {
-      this.radius = this.radius0 + (this.radius0 * currentAnimation.scale - this.radius0) * progress;
-    } else {
+    this.radius = this.radius0 + (this.radius0 * currentAnimation.scale - this.radius0) * progress;
+
+    if (progress >= 1) {
       this.radius0 = this.radius;
     }
 
-    return progress
+    return { currentAnimation, progress }
   }
 }
 
@@ -137,17 +136,16 @@ class Square extends Shape {
     ctx.fill();
   }
 
-  public update(now, animations: Map<String, Keyframe>): number {
-    const currentAnimation = animations.get(this.animation[this.activeKeyframe]);
-    const progress = super.update(now, animations);
+  public update(now, animations: Map<String, Keyframe>) {
+    const { currentAnimation, progress } = super.update(now, animations);
 
-    if (progress <= 1) {
-      this.side = this.side0 + (this.side0 * currentAnimation.scale - this.side0) * progress;
-    } else {
+    this.side = this.side0 + (this.side0 * currentAnimation.scale - this.side0) * progress;
+
+    if (progress >= 1) {
       this.side0 = this.side;
     }
 
-    return progress
+    return { currentAnimation, progress }
   }
 }
 
