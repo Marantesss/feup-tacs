@@ -1,10 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { Animator } from "../dsl/animator";
 
-const Viewer = ({ shapes, animations }) => {
+const Viewer = ({ shapes, animations, shouldRun }) => {
   const canvas = useRef(null);
 
   useEffect(() => {
+    if (!shouldRun) {
+      return;
+    }
     const animator = new Animator(shapes, animations, canvas.current);
     window.requestAnimationFrame((timestamp) => {
       animator.shapes.forEach((shape) => {
@@ -19,7 +22,7 @@ const Viewer = ({ shapes, animations }) => {
     // ...then set the internal size to match
     canvas.current.width = canvas.current.offsetWidth;
     canvas.current.height = canvas.current.offsetHeight;
-  }, [shapes, animations]);
+  }, [shapes, animations, shouldRun]);
 
   return (
     <div className="h-full w-full">

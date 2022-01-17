@@ -11,6 +11,7 @@ const App = () => {
   const [code, setCode] = useState<string>(defaultCode);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const compileCode = () => {
     setIsError(false);
@@ -18,10 +19,18 @@ const App = () => {
     try {
       transpiler.execute(code);
       setIsSuccess(true);
+      setErrorMessage("");
     } catch (e) {
       setIsError(true);
+      setErrorMessage(e.message);
       console.error(e);
     }
+  };
+
+  const onEditorChange = (newValue: string) => {
+    setCode(newValue);
+    setIsError(false);
+    setIsSuccess(false);
   };
 
   return (
@@ -35,10 +44,12 @@ const App = () => {
           setIsError={setIsError}
           setIsSuccess={setIsSuccess}
           compileCode={compileCode}
+          onEditorChange={onEditorChange}
+          errorMessage={errorMessage}
         />
       </div>
       <div className="row-span-1">
-        <Viewer shapes={transpiler.shapes} animations={transpiler.keyframes} />
+        <Viewer shapes={transpiler.shapes} animations={transpiler.keyframes} shouldRun={isSuccess} />
       </div>
       <div className="row-span-1">
         <GeneratedCode />
