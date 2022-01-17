@@ -106,12 +106,15 @@ class Circle extends Shape {
   }
 
   public update(now, animations: Map<String, Keyframe>): number {
+    const currentAnimation = animations.get(this.animation[this.activeKeyframe]);
     const progress = super.update(now, animations);
-    // this.radius = this.radius0 + (this.radius0 * this.keyframes[this.activeKeyframe].scale - this.radius0) * progress;
 
-    // if (progress >= 1) {
-    //     this.radius0 = this.radius;
-    // }
+    if (progress <= 1) {
+      this.radius = this.radius0 + (this.radius0 * currentAnimation.scale - this.radius0) * progress;
+    } else {
+      this.radius0 = this.radius;
+    }
+
     return progress
   }
 }
@@ -126,7 +129,6 @@ class Square extends Shape {
     this.side0 = shape.size;
   }
 
-  // TODO: center is not x and y
   public draw(ctx) {
     ctx.beginPath();
     ctx.rect(this.position.x - this.side / 2, this.position.y - this.side / 2, this.side, this.side);
@@ -136,12 +138,15 @@ class Square extends Shape {
   }
 
   public update(now, animations: Map<String, Keyframe>): number {
+    const currentAnimation = animations.get(this.animation[this.activeKeyframe]);
     const progress = super.update(now, animations);
-    // this.side = this.side0 + (this.side0 * this.keyframes[this.activeKeyframe].scale - this.side0) * progress;
 
-    // if (progress >= 1) {
-    //     this.side0 = this.side;
-    // }
+    if (progress <= 1) {
+      this.side = this.side0 + (this.side0 * currentAnimation.scale - this.side0) * progress;
+    } else {
+      this.side0 = this.side;
+    }
+
     return progress
   }
 }
