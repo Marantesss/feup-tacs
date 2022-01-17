@@ -36,13 +36,22 @@ class Shape {
     }
 
     update(now) {
-        let runtime = now - this.starttime;
+        const runtime = now - this.starttime;
         let progress = runtime / this.keyframes[this.activekf].time;
         progress = Math.min(progress, 1);
 
         this.x = this.x0 + (this.keyframes[this.activekf].x - this.x0) * progress;
         this.y = this.y0 + (this.keyframes[this.activekf].y - this.y0) * progress;
-        this.color = this.color0;
+
+        const ah = parseInt(this.color0.replace(/#/g, ''), 16),
+            ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+            bh = parseInt(this.keyframes[this.activekf].color.replace(/#/g, ''), 16),
+            br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+            rr = ar + progress * (br - ar),
+            rg = ag + progress * (bg - ag),
+            rb = ab + progress * (bb - ab);
+
+        this.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
 
         if (progress >= 1) {
             this.x0 = this.x;
@@ -91,10 +100,9 @@ class Square extends Shape {
         this.side0 = side;
     }
 
-    // TODO: center is not x and y
     draw(ctx) {
         ctx.beginPath();
-        ctx.rect(this.x, this.y, this.side, this.side);
+        ctx.rect(this.x - this.side / 2, this.y - this.side / 2, this.side, this.side);
         ctx.closePath();
         ctx.fillStyle = this.color;
         ctx.fill();
@@ -124,14 +132,14 @@ class Keyframe {
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-const keyframe1 = new Keyframe('linear', 'red', 200, 250, 2, 2000);
-const keyframe2 = new Keyframe('linear', 'red', 10, 150, 0.5, 3000);
-const keyframe3 = new Keyframe('linear', 'red', 250, 10, 4, 1000);
+const keyframe1 = new Keyframe('linear', '#00ff00', 200, 250, 2, 2000);
+const keyframe2 = new Keyframe('linear', '#ffa500', 10, 150, 0.5, 3000);
+const keyframe3 = new Keyframe('linear', '#000000', 250, 10, 4, 1000);
 const keyframes1 = [keyframe1, keyframe2];
 const keyframes2 = [keyframe2, keyframe3];
 
-const circle = new Circle(100, 100, 25, 'red', keyframes1);
-const square = new Square(150, 200, 50, 'blue', keyframes2);
+const circle = new Circle(100, 100, 25, '#ff0000', keyframes1);
+const square = new Square(150, 200, 50, '#0000ff', keyframes2);
 const shapes = [circle, square];
 
 const animator = new Animator(shapes, ctx);

@@ -2,7 +2,7 @@ import { transpiler } from "./analyzer";
 import { AnimType, KeyframeObject, ShapeObject, ShapeType } from "./language";
 
 class Animator {
-  constructor(public shapes, public animations: Map<string, Keyframe>, public ctx) {}
+  constructor(public shapes, public animations: Map<string, Keyframe>, public ctx) { }
 
   animate(timestamp) {
     const now = timestamp || new Date().getTime();
@@ -51,13 +51,22 @@ abstract class Shape implements ShapeObject {
 
   public update(now, animations: Map<String, Keyframe>) {
     const currentAnimation = animations.get(this.animation[this.activeKeyframe])
-    let runtime = now - this.startTime;
+    const runtime = now - this.startTime;
     let progress = runtime / currentAnimation.time;
     progress = Math.min(progress, 1);
 
     this.position.x = this.position0.x + (currentAnimation.position.x - this.position0.x) * progress;
     this.position.y = this.position0.y + (currentAnimation.position.y - this.position0.y) * progress;
-    this.color = this.color0;
+
+    const ah = parseInt(this.color0.replace(/#/g, ''), 16),
+      ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+      bh = parseInt(currentAnimation.color.replace(/#/g, ''), 16),
+      br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+      rr = ar + progress * (br - ar),
+      rg = ag + progress * (bg - ag),
+      rb = ab + progress * (bb - ab);
+
+    this.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
 
     if (progress >= 1) {
       this.position0.x = this.position.x;
@@ -113,10 +122,9 @@ class Square extends Shape {
     this.side0 = shape.size;
   }
 
-  // TODO: center is not x and y
   public draw(ctx) {
     ctx.beginPath();
-    ctx.rect(this.position.x, this.position.y, this.side, this.side);
+    ctx.rect(this.position.x - this.side / 2, this.position.y - this.side / 2, this.side, this.side);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
