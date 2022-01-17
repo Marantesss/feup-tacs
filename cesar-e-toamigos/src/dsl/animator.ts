@@ -1,4 +1,3 @@
-import { transpiler } from "./analyzer";
 import { AnimType, KeyframeObject, ShapeObject, ShapeType } from "./language";
 
 class Animator {
@@ -108,6 +107,9 @@ class Circle extends Shape {
   public update(now, animations: Map<String, Keyframe>) {
     const { currentAnimation, progress } = super.update(now, animations);
 
+    if (this.activeKeyframe === this.animation.length - 1) {
+      return { currentAnimation, progress }
+    }
     this.radius = this.radius0 + (this.radius0 * currentAnimation.scale - this.radius0) * progress;
 
     if (progress >= 1) {
@@ -138,6 +140,10 @@ class Square extends Shape {
 
   public update(now, animations: Map<String, Keyframe>) {
     const { currentAnimation, progress } = super.update(now, animations);
+
+    if (this.activeKeyframe === this.animation.length - 1) {
+      return { currentAnimation, progress }
+    }
 
     this.side = this.side0 + (this.side0 * currentAnimation.scale - this.side0) * progress;
 

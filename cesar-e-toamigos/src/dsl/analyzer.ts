@@ -54,41 +54,6 @@ class Transpiler {
   }
 }
 
-//TODO: identation
-const teste = `\
-Shape:
-id: ola
-type: circle
-color: red
-position:[0,0]
-size: 20px
-animation: [1]
-
-Shape:
-id: quadrado1
-type: square
-color: purple
-position:[1,2]
-size: 132px
-animation: [   1 ,     2     ]
-
-Keyframe:
-id: 1
-type: slerp
-color: red
-scale: 1
-position: [0,1]
-time: 2s
-
-Keyframe:
-id: 2
-type: lerp
-color: green
-scale: 2
-position: [5,2]
-time: 5s
-`;
-
 const transpiler = new Transpiler();
 
 export { transpiler }

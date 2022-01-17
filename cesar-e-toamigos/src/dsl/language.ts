@@ -50,6 +50,7 @@ interface Grammar {
   animType: AnimType;
   color: string;
   size: number;
+  scale: number;
   time: number;
   position: { x: number; y: number };
   arr: Array<string>;
@@ -137,7 +138,7 @@ const language = P.createLanguage<Grammar>({
   timeExpr: (l) => makePair("time", l.time),
   positionExpr: (l) => makePair("position", l.position),
   animationExpr: (l) => makePair("animation", l.arr),
-  scaleExpression: (l) => makePair("scale", l.id),
+  scaleExpression: (l) => makePair("scale", l.scale),
 
   id: (l) => P.regexp(/[a-zA-Z0-9]+/),
   shapeType: (l) => P.alt(P.string("square"), P.string("circle")),
@@ -156,6 +157,7 @@ const language = P.createLanguage<Grammar>({
       P.string("black").result("#000000")
     ),
   size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
+  scale: (l) => P.digits.map((d) => parseFloat(d)),
   time: (l) =>
     P.regexp(/[0-9]+/)
       .skip(P.string("s"))
