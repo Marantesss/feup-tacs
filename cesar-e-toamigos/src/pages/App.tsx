@@ -84,9 +84,17 @@ Shape:
   id: quadrado1
   type: square
   color: purple
-  position:[1,2]
+  position:                  [50,50]
   size: 45px
   animation: [   1 ,     2     ]
+  
+Shape:
+  id: quadrado2
+  type: square
+  color: #435672
+  position:                  [100,100]
+  size: 35px
+  animation: [ 2 , 4    ]
 
 Keyframe:
   id: 1
@@ -111,6 +119,14 @@ Keyframe:
   scale: 2
   position: [535,286]
   time: 2s
+  
+Keyframe:
+  id: 4
+  type: lerp
+  color: #123
+  scale: 4
+  position: [786,345]
+  time: 3s
 `;
 
 export default App;
