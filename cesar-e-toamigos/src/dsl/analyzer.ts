@@ -21,28 +21,36 @@ class Transpiler {
   }
 
   public execute(code: string): void {
-    this.parse(code)
-    this.analyzeSemantics()
+    this.parse(code);
+    this.analyzeSemantics();
+  }
+
+  private clear(): void {
+    this._keyframes.clear();
+    this._shapes = [];
   }
 
   private parse(code: string): void {
+    this.clear();
     const output = this._language.expr.tryParse(code);
     const { shapes, keyframes } = output;
 
     this._shapes = shapes.map((shape: ShapeObject) => {
       switch (shape.type) {
-        case "circle": return new Circle(shape);
-        case "square": return new Square(shape);
-        case "triangle": return new Triangle(shape);
-        default: return new Square(shape);
+        case "circle":
+          return new Circle(shape);
+        case "square":
+          return new Square(shape);
+        case "triangle":
+          return new Triangle(shape);
+        default:
+          return new Square(shape);
       }
     });
 
     keyframes.forEach((keyframe: KeyframeObject) => {
       if (this._keyframes.has(keyframe.id)) {
-        throw new Error(
-          `Keyframe ${keyframe.id} has duplicate id`
-        );
+        throw new Error(`Keyframe ${keyframe.id} has duplicate id`);
       }
       this._keyframes.set(keyframe.id, new Keyframe(keyframe));
     });
@@ -66,4 +74,4 @@ class Transpiler {
 
 const transpiler = new Transpiler();
 
-export { transpiler }
+export { transpiler };

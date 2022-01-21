@@ -23,15 +23,16 @@ const App = () => {
       setErrorMessage("");
       setAnnotation({})
     } catch (e) {
+      const { result, message } = e
       setIsError(true);
-      setErrorMessage(e.message);
+      setErrorMessage(message);
       setAnnotation(
-        e.result.index
+        result
           ? {
-              row: e.result.index.line - 1 ,
-              column: e.result.index.column - 1,
+              row: result.index.line - 1 ,
+              column: result.index.column - 1,
               type: "error",
-              text: `Expected one of ${e.result.expected}`,
+              text: `Expected one of ${result.expected}`,
             }
           : {}
       );
