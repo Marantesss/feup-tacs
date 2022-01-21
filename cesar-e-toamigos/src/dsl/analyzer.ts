@@ -1,5 +1,5 @@
 import * as P from "parsimmon";
-import { Shape, Keyframe, Circle, Square } from "./animator";
+import { Shape, Keyframe, Circle, Square, Triangle } from "./animator";
 import { KeyframeObject, language, ShapeObject } from "./language";
 
 class Transpiler {
@@ -21,20 +21,25 @@ class Transpiler {
   }
 
   public execute(code: string): void {
-      this.parse(code)
-      this.analyzeSemantics()
+    this.parse(code)
+    this.analyzeSemantics()
   }
 
   private parse(code: string): void {
     const output = this._language.expr.tryParse(code);
     const { shapes, keyframes } = output;
 
-    this._shapes = shapes.map((shape: ShapeObject) =>
-      shape.type === "circle" ? new Circle(shape) : new Square(shape)
-    );
+    this._shapes = shapes.map((shape: ShapeObject) => {
+      switch (shape.type) {
+        case "circle": return new Circle(shape);
+        case "square": return new Square(shape);
+        case "triangle": return new Triangle(shape);
+        default: return new Square(shape);
+      }
+    });
 
     keyframes.forEach((keyframe: KeyframeObject) => {
-      if(this._keyframes.has(keyframe.id)){
+      if (this._keyframes.has(keyframe.id)) {
         throw new Error(
           `Keyframe ${keyframe.id} has duplicate id`
         );

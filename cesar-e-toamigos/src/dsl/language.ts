@@ -1,6 +1,6 @@
 import * as P from "parsimmon";
 
-export type ShapeType = "square" | "circle";
+export type ShapeType = "square" | "circle" | "triangle";
 export type AnimType = "lerp" | "slerp";
 
 export interface ShapeObject {
@@ -79,7 +79,7 @@ const makeKeyframeObject = ([object, body]): KeyframeObject => {
   return obj as KeyframeObject;
 };
 
-const makeLanguageOutput =(result: Array<any>) => {
+const makeLanguageOutput = (result: Array<any>) => {
   const shapes = result.filter(({ scale }) => !scale);
   const keyframes = result.filter(({ scale }) => scale);
 
@@ -141,7 +141,7 @@ const language = P.createLanguage<Grammar>({
   scaleExpression: (l) => makePair("scale", l.scale),
 
   id: (l) => P.regexp(/[a-zA-Z0-9]+/),
-  shapeType: (l) => P.alt(P.string("square"), P.string("circle")),
+  shapeType: (l) => P.alt(P.string("square"), P.string("circle"), P.string("triangle")),
   animType: (l) => P.alt(P.string("lerp"), P.string("slerp")),
   color: (l) =>
     P.alt(

@@ -97,19 +97,13 @@ abstract class Shape implements ShapeObject {
 }
 
 class Circle extends Shape {
-  private radius: number;
-
-  constructor(shape: ShapeObject) {
-    super(shape);
-    this.radius = shape.size / 2;
-  }
-
   public draw(ctx) {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale, this.scale);
+
     ctx.beginPath();
-    ctx.arc(0, 0, this.radius, 0, Math.PI * 2, true);
+    ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
@@ -118,19 +112,30 @@ class Circle extends Shape {
 }
 
 class Square extends Shape {
-  private side: number;
-
-  constructor(shape: ShapeObject) {
-    super(shape);
-    this.side = shape.size;
-  }
-
   public draw(ctx) {
     ctx.save();
-    ctx.translate(this.position.x - this.side / 2, this.position.y - this.side / 2);
+    ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale, this.scale);
+
     ctx.beginPath();
-    ctx.rect(0, 0, this.side, this.side);
+    ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
+    ctx.closePath();
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+class Triangle extends Shape {
+  public draw(ctx) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.scale(this.scale, this.scale);
+
+    ctx.beginPath();
+    ctx.moveTo(-this.size / 2, Math.sqrt(3) / 6 * this.size);
+    ctx.lineTo(0, -Math.sqrt(3) / 3 * this.size);
+    ctx.lineTo(this.size / 2, Math.sqrt(3) / 6 * this.size);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
@@ -156,4 +161,4 @@ class Keyframe implements KeyframeObject {
   }
 }
 
-export { Animator, Shape, Keyframe, Circle, Square };
+export { Animator, Shape, Keyframe, Circle, Square, Triangle };
