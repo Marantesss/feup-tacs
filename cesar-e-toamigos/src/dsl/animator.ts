@@ -12,10 +12,12 @@ class Animator {
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    this.ctx.save();
     this.shapes.forEach((shape) => {
       shape.draw(this.ctx);
       shape.update(now, this.animations);
     });
+    this.ctx.restore();
 
     window.requestAnimationFrame((timestamp) => this.animate(timestamp));
   }
@@ -32,6 +34,8 @@ abstract class Shape implements ShapeObject {
   // animations
   startTime: number = 0;
   activeKeyframe: number = 0;
+  scale: number;
+  scale0: number;
   color0: string;
   position0: { x: number; y: number };
 
@@ -44,6 +48,8 @@ abstract class Shape implements ShapeObject {
     this.size = shape.size;
     this.animation = shape.animation;
 
+    this.scale = 1;
+    this.scale0 = this.scale;
     this.position0 = { ...shape.position };
     this.startTime = 0;
     this.activeKeyframe = 0;
@@ -60,6 +66,7 @@ abstract class Shape implements ShapeObject {
 
     this.position.x = this.position0.x + (currentAnimation.position.x - this.position0.x) * progress;
     this.position.y = this.position0.y + (currentAnimation.position.y - this.position0.y) * progress;
+    this.scale = this.scale0 + (this.scale0 * currentAnimation.scale - this.scale0) * progress;
 
     const ah = parseInt(this.color0.replace(/#/g, ''), 16),
       ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
@@ -71,9 +78,14 @@ abstract class Shape implements ShapeObject {
 
     this.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
 
+    if (this.activeKeyframe === this.animation.length - 1) {
+      return;
+    }
+
     if (progress >= 1) {
       this.position0.x = this.position.x;
       this.position0.y = this.position.y;
+      this.scale0 = this.scale;
       this.color0 = this.color;
 
       if (this.activeKeyframe < this.animation.length - 1) {
@@ -81,77 +93,48 @@ abstract class Shape implements ShapeObject {
         this.activeKeyframe++;
       }
     }
-
-    return { currentAnimation, progress };
   }
 }
 
 class Circle extends Shape {
   private radius: number;
-  private radius0: number;
 
   constructor(shape: ShapeObject) {
     super(shape);
     this.radius = shape.size / 2;
-    this.radius0 = shape.size / 2;
   }
 
   public draw(ctx) {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.scale(this.scale, this.scale);
     ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, true);
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
-  }
-
-  public update(now, animations: Map<String, Keyframe>) {
-    const { currentAnimation, progress } = super.update(now, animations);
-
-    if (this.activeKeyframe === this.animation.length - 1) {
-      return { currentAnimation, progress }
-    }
-    this.radius = this.radius0 + (this.radius0 * currentAnimation.scale - this.radius0) * progress;
-
-    if (progress >= 1) {
-      this.radius0 = this.radius;
-    }
-
-    return { currentAnimation, progress }
+    ctx.restore();
   }
 }
 
 class Square extends Shape {
   private side: number;
-  private side0: number;
 
   constructor(shape: ShapeObject) {
     super(shape);
     this.side = shape.size;
-    this.side0 = shape.size;
   }
 
   public draw(ctx) {
+    ctx.save();
+    ctx.translate(this.position.x - this.side / 2, this.position.y - this.side / 2);
+    ctx.scale(this.scale, this.scale);
     ctx.beginPath();
-    ctx.rect(this.position.x - this.side / 2, this.position.y - this.side / 2, this.side, this.side);
+    ctx.rect(0, 0, this.side, this.side);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
-  }
-
-  public update(now, animations: Map<String, Keyframe>) {
-    const { currentAnimation, progress } = super.update(now, animations);
-
-    if (this.activeKeyframe === this.animation.length - 1) {
-      return { currentAnimation, progress }
-    }
-
-    this.side = this.side0 + (this.side0 * currentAnimation.scale - this.side0) * progress;
-
-    if (progress >= 1) {
-      this.side0 = this.side;
-    }
-
-    return { currentAnimation, progress }
+    ctx.restore();
   }
 }
 
