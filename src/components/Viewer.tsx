@@ -1,11 +1,17 @@
 import React, { useEffect, useRef } from "react";
-import { Animator } from "../dsl/animator";
+import { Animator, Keyframe, Shape } from "../dsl/animator";
 
-const Viewer = ({ shapes, animations, shouldRun }) => {
+interface Props {
+  shapes?: Array<Shape>;
+  animations: Map<string, Keyframe>;
+  shouldRun: boolean;
+}
+
+const Viewer = ({ shapes, animations, shouldRun }: Props) => {
   const canvas = useRef(null);
 
   useEffect(() => {
-    if (!shouldRun) {
+    if (!shouldRun || shapes.length === 0) {
       return;
     }
     const animator = new Animator(shapes, animations, canvas.current);

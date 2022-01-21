@@ -5,6 +5,7 @@ import Editor from "../components/Editor";
 import GeneratedCode from "../components/GeneratedCode";
 import Viewer from "../components/Viewer";
 import { transpiler } from "../dsl/analyzer";
+import { Keyframe, Shape } from "../dsl/animator";
 import "./App.css";
 
 const App = () => {
@@ -13,6 +14,8 @@ const App = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [annotation, setAnnotation] = useState<{}>({});
+  const [shapes, setShapes] = useState<Array<Shape>>([]);
+  const [keyframes, setKeyframes] = useState<Map<string, Keyframe>>(new Map());
 
   const compileCode = () => {
     setIsError(false);
@@ -21,11 +24,15 @@ const App = () => {
       transpiler.execute(code);
       setIsSuccess(true);
       setErrorMessage("");
+      setShapes(transpiler.shapes)
+      setKeyframes(transpiler.keyframes)
       setAnnotation({})
     } catch (e) {
       const { result, message } = e
       setIsError(true);
       setErrorMessage(message);
+      setShapes([])
+      setKeyframes(new Map())
       setAnnotation(
         result
           ? {
@@ -60,8 +67,8 @@ const App = () => {
       </div>
       <div className="row-span-1">
         <Viewer
-          shapes={transpiler.shapes}
-          animations={transpiler.keyframes}
+          shapes={shapes}
+          animations={keyframes}
           shouldRun={isSuccess}
         />
       </div>
@@ -91,7 +98,7 @@ Shape:
   
 Shape:
   id: quadrado2
-  type: square
+  type: triangle
   color: #435672
   position:                  [100,100]
   size: 35px

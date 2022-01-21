@@ -1,6 +1,16 @@
 import AceEditor from "react-ace";
 import cx from "classnames";
 
+interface Props {
+  code?: string;
+  isError: boolean;
+  isSuccess: boolean;
+  compileCode: () => void;
+  onEditorChange: (newValue: string) => void;
+  errorMessage: string;
+  annotation: any;
+}
+
 const Editor = ({
   code,
   isError,
@@ -9,7 +19,7 @@ const Editor = ({
   onEditorChange,
   errorMessage,
   annotation,
-}) => {
+}: Props) => {
   const getButtonContent = () =>
     !isError && !isSuccess ? "Compile" : isError ? "Failed" : "Success";
 
