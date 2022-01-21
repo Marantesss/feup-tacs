@@ -36,6 +36,8 @@ abstract class Shape implements ShapeObject {
   activeKeyframe: number = 0;
   scale: number;
   scale0: number;
+  rotation: number;
+  rotation0: number;
   color0: string;
   position0: { x: number; y: number };
 
@@ -50,6 +52,8 @@ abstract class Shape implements ShapeObject {
 
     this.scale = 1;
     this.scale0 = this.scale;
+    this.rotation = 0;
+    this.rotation0 = this.rotation;
     this.position0 = { ...shape.position };
     this.startTime = 0;
     this.activeKeyframe = 0;
@@ -66,7 +70,8 @@ abstract class Shape implements ShapeObject {
 
     this.position.x = this.position0.x + (currentAnimation.position.x - this.position0.x) * progress;
     this.position.y = this.position0.y + (currentAnimation.position.y - this.position0.y) * progress;
-    this.scale = this.scale0 + (this.scale0 * currentAnimation.scale - this.scale0) * progress;
+    this.scale = this.scale0 + (currentAnimation.scale - this.scale0) * progress;
+    this.rotation = this.rotation0 + (currentAnimation.rotation - this.rotation0) * progress;
 
     const ah = parseInt(this.color0.replace(/#/g, ''), 16),
       ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
@@ -86,6 +91,7 @@ abstract class Shape implements ShapeObject {
       this.position0.x = this.position.x;
       this.position0.y = this.position.y;
       this.scale0 = this.scale;
+      this.rotation0 = this.rotation;
       this.color0 = this.color;
 
       if (this.activeKeyframe < this.animation.length - 1) {
@@ -101,6 +107,7 @@ class Circle extends Shape {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale, this.scale);
+    ctx.rotate(this.rotation * Math.PI / 180);
 
     ctx.beginPath();
     ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2, true);
@@ -116,6 +123,7 @@ class Square extends Shape {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale, this.scale);
+    ctx.rotate(this.rotation * Math.PI / 180);
 
     ctx.beginPath();
     ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
@@ -131,6 +139,7 @@ class Triangle extends Shape {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale, this.scale);
+    ctx.rotate(this.rotation * Math.PI / 180);
 
     ctx.beginPath();
     ctx.moveTo(-this.size / 2, Math.sqrt(3) / 6 * this.size);
