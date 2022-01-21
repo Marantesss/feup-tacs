@@ -69,9 +69,9 @@ abstract class Shape implements ShapeObject {
     this.scale = this.scale0 + (this.scale0 * currentAnimation.scale - this.scale0) * progress;
 
     const ah = parseInt(this.color0.replace(/#/g, ''), 16),
-      ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+      ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
       bh = parseInt(currentAnimation.color.replace(/#/g, ''), 16),
-      br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+      br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff,
       rr = ar + progress * (br - ar),
       rg = ag + progress * (bg - ag),
       rb = ab + progress * (bb - ab);
