@@ -150,6 +150,7 @@ class Keyframe implements KeyframeObject {
   scale: number;
   position: { x: number; y: number };
   time: number;
+  rotation: number;
 
   constructor(keyframe: KeyframeObject) {
     this.id = keyframe.id;
@@ -158,6 +159,7 @@ class Keyframe implements KeyframeObject {
     this.scale = keyframe.scale;
     this.position = keyframe.position;
     this.time = keyframe.time;
+    this.rotation = keyframe.rotation
   }
 }
 

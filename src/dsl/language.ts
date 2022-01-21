@@ -17,6 +17,7 @@ export interface KeyframeObject {
   type: AnimType;
   color: string;
   scale: number;
+  rotation: number;
   position: { x: number; y: number };
   time: number;
 }
@@ -44,6 +45,7 @@ interface Grammar {
   positionExpr: Array<string>;
   animationExpr: Array<string>;
   scaleExpression: Array<string>;
+  rotationExpression: Array<string>;
 
   id: string;
   shapeType: ShapeType;
@@ -126,7 +128,8 @@ const language = P.createLanguage<Grammar>({
       l.colorExpr,
       l.timeExpr,
       l.scaleExpression,
-      l.positionExpr
+      l.positionExpr,
+      l.rotationExpression
     ),
 
   // Key-Value expressions (syntax analysis)
@@ -139,6 +142,7 @@ const language = P.createLanguage<Grammar>({
   positionExpr: (l) => makePair("position", l.position),
   animationExpr: (l) => makePair("animation", l.arr),
   scaleExpression: (l) => makePair("scale", l.scale),
+  rotationExpression: (l) => makePair("rotation", l.scale),
 
   id: (l) => P.regexp(/[a-zA-Z0-9]+/),
   shapeType: (l) => P.alt(P.string("square"), P.string("circle"), P.string("triangle")),

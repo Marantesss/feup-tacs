@@ -110,6 +110,7 @@ Keyframe:
   color: red
   scale: 1
   position: [30,30]
+  rotation: 90
   time: 2s
 
 Keyframe:
