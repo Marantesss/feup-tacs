@@ -6,6 +6,7 @@ import GeneratedCode from "../components/GeneratedCode";
 import Viewer from "../components/Viewer";
 import { transpiler } from "../dsl/analyzer";
 import { Keyframe, Shape } from "../dsl/animator";
+import { generator } from "../dsl/generator";
 import "./App.css";
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
   const [annotation, setAnnotation] = useState<{}>({});
   const [shapes, setShapes] = useState<Array<Shape>>([]);
   const [keyframes, setKeyframes] = useState<Map<string, Keyframe>>(new Map());
+  const [generatedCode, setGeneratedCode] = useState<string>("");
 
   const compileCode = () => {
     setIsError(false);
@@ -27,12 +29,14 @@ const App = () => {
       setShapes(transpiler.shapes)
       setKeyframes(transpiler.keyframes)
       setAnnotation({})
+      setGeneratedCode(generator.generate(transpiler.shapes, transpiler.keyframes))
     } catch (e) {
       const { result, message } = e
       setIsError(true);
       setErrorMessage(message);
       setShapes([])
       setKeyframes(new Map())
+      setGeneratedCode("")
       setAnnotation(
         result
           ? {
@@ -73,7 +77,7 @@ const App = () => {
         />
       </div>
       <div className="row-span-1">
-        <GeneratedCode />
+        <GeneratedCode value={generatedCode} />
       </div>
     </div>
   );
