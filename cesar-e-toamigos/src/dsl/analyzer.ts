@@ -34,6 +34,11 @@ class Transpiler {
     );
 
     keyframes.forEach((keyframe: KeyframeObject) => {
+      if(this._keyframes.has(keyframe.id)){
+        throw new Error(
+          `Keyframe ${keyframe.id} has duplicate id`
+        );
+      }
       this._keyframes.set(keyframe.id, new Keyframe(keyframe));
     });
   }
