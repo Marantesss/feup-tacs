@@ -12,8 +12,8 @@ class Generator {
         animation: [${shape.animation.map(a => `'${a}'`)}],
         startTime: 0,
         activeKeyframe: 0,
-        scale: ${shape.scale},
-        scale0: ${shape.scale0},
+        scale: { x: ${shape.scale.x}, y: ${shape.scale.y} },
+        scale0: { x: ${shape.scale0.x}, y: ${shape.scale0.y} },
         color0: '${shape.color0}',
         position0: { x: ${shape.position0.x}, y: ${shape.position0.y} }
       }`.replace(/\s/g, "");
@@ -33,15 +33,17 @@ class Generator {
 
   public generate(shapes: Array<Shape>, keyframes: Map<string, Keyframe>): string {
     return `\
-const shapes = [${shapes.map(shape => this.generateShape(shape)).join(',')}];
+const shapes = [
+  ${shapes.map(shape => this.generateShape(shape)).join(',\n  ')}
+];
 const keyframes = new Map();
 ${Array.from(keyframes).map(([key, value]) => `keyframes.set('${key}', ${this.generateKeyframes(value)});`).join('\n')}
 
 const animator = (canvasId) => {
   const canvas = document.getElementById(canvasId);
-  const ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d');
 
-  const obj = {}
+  const obj = {};
 
   obj.animate = (timestamp) => {
     const now = timestamp || new Date().getTime();
@@ -52,11 +54,15 @@ const animator = (canvasId) => {
       switch (shape.type) {
         case "circle":
           drawCircle(shape);
+          break;
         case "square":
           drawSquare(shape);
-        case "triangle":
+          break;
+          case "triangle":
           drawTriangle(shape);
+          break;
         default:
+          break;
       }
       update(now);
     });
@@ -150,11 +156,11 @@ const animator = (canvasId) => {
     ctx.restore();
   }
 
-  return obj
+  return obj;
 }
 
-const myAnimator = animator('canvas')
-myAnimator.animate()
+const myAnimator = animator('canvas');
+myAnimator.animate();
 `
   }
 }

@@ -3,8 +3,12 @@ import { AnimType, KeyframeObject, ShapeObject, ShapeType } from "./language";
 class Animator {
   public ctx;
 
-  constructor(public shapes: Array<Shape>, public animations: Map<string, Keyframe>, public canvas) {
-    this.ctx = canvas.getContext('2d');
+  constructor(
+    public shapes: Array<Shape>,
+    public animations: Map<string, Keyframe>,
+    public canvas
+  ) {
+    this.ctx = canvas.getContext("2d");
   }
 
   animate(timestamp) {
@@ -34,13 +38,12 @@ abstract class Shape implements ShapeObject {
   // animations
   startTime: number = 0;
   activeKeyframe: number = 0;
-  scale: number;
-  scale0: number;
+  scale: { x: number; y: number };
+  scale0: { x: number; y: number };
   rotation: number;
   rotation0: number;
   color0: string;
   position0: { x: number; y: number };
-
 
   constructor(shape: ShapeObject) {
     this.id = shape.id;
@@ -50,8 +53,8 @@ abstract class Shape implements ShapeObject {
     this.size = shape.size;
     this.animation = shape.animation;
 
-    this.scale = 1;
-    this.scale0 = this.scale;
+    this.scale = { x: 1, y: 1 };
+    this.scale0 = { ...this.scale };
     this.rotation = 0;
     this.rotation0 = this.rotation;
     this.position0 = { ...shape.position };
@@ -63,25 +66,47 @@ abstract class Shape implements ShapeObject {
   public abstract draw(ctx);
 
   public update(now, animations: Map<String, Keyframe>) {
-    const currentAnimation = animations.get(this.animation[this.activeKeyframe])
+    if (this.animation.length === 0) {
+      return
+    }
+    
+    const currentAnimation = animations.get(
+      this.animation[this.activeKeyframe]
+    );
     let runtime = now - this.startTime;
     let progress = runtime / (currentAnimation.time * 1000);
     progress = Math.min(progress, 1);
 
-    this.position.x = this.position0.x + (currentAnimation.position.x - this.position0.x) * progress;
-    this.position.y = this.position0.y + (currentAnimation.position.y - this.position0.y) * progress;
-    this.scale = this.scale0 + (currentAnimation.scale - this.scale0) * progress;
-    this.rotation = this.rotation0 + (currentAnimation.rotation - this.rotation0) * progress;
+    this.position = {
+      x:
+        this.position0.x +
+        (currentAnimation.position.x - this.position0.x) * progress,
+      y:
+        this.position0.y +
+        (currentAnimation.position.y - this.position0.y) * progress
+    };
+    this.scale = {
+      x: this.scale0.x + (currentAnimation.scale.x - this.scale0.x) * progress,
+      y: this.scale0.y + (currentAnimation.scale.y - this.scale0.y) * progress
+    };
+    this.rotation =
+      this.rotation0 + (currentAnimation.rotation - this.rotation0) * progress;
 
-    const ah = parseInt(this.color0.replace(/#/g, ''), 16),
-      ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
-      bh = parseInt(currentAnimation.color.replace(/#/g, ''), 16),
-      br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff,
+    const ah = parseInt(this.color0.replace(/#/g, ""), 16),
+      ar = ah >> 16,
+      ag = (ah >> 8) & 0xff,
+      ab = ah & 0xff,
+      bh = parseInt(currentAnimation.color.replace(/#/g, ""), 16),
+      br = bh >> 16,
+      bg = (bh >> 8) & 0xff,
+      bb = bh & 0xff,
       rr = ar + progress * (br - ar),
       rg = ag + progress * (bg - ag),
       rb = ab + progress * (bb - ab);
 
-    this.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+    this.color =
+      "#" +
+      (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1);
 
     if (this.activeKeyframe === this.animation.length - 1) {
       return;
@@ -106,8 +131,8 @@ class Circle extends Shape {
   public draw(ctx) {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
-    ctx.scale(this.scale, this.scale);
-    ctx.rotate(this.rotation * Math.PI / 180);
+    ctx.scale(this.scale.x, this.scale.y);
+    ctx.rotate((this.rotation * Math.PI) / 180);
 
     ctx.beginPath();
     ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2, true);
@@ -122,8 +147,8 @@ class Square extends Shape {
   public draw(ctx) {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
-    ctx.scale(this.scale, this.scale);
-    ctx.rotate(this.rotation * Math.PI / 180);
+    ctx.scale(this.scale.x, this.scale.y);
+    ctx.rotate((this.rotation * Math.PI) / 180);
 
     ctx.beginPath();
     ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
@@ -138,13 +163,13 @@ class Triangle extends Shape {
   public draw(ctx) {
     ctx.save();
     ctx.translate(this.position.x, this.position.y);
-    ctx.scale(this.scale, this.scale);
-    ctx.rotate(this.rotation * Math.PI / 180);
+    ctx.scale(this.scale.x, this.scale.y);
+    ctx.rotate((this.rotation * Math.PI) / 180);
 
     ctx.beginPath();
-    ctx.moveTo(-this.size / 2, Math.sqrt(3) / 6 * this.size);
-    ctx.lineTo(0, -Math.sqrt(3) / 3 * this.size);
-    ctx.lineTo(this.size / 2, Math.sqrt(3) / 6 * this.size);
+    ctx.moveTo(-this.size / 2, (Math.sqrt(3) / 6) * this.size);
+    ctx.lineTo(0, (-Math.sqrt(3) / 3) * this.size);
+    ctx.lineTo(this.size / 2, (Math.sqrt(3) / 6) * this.size);
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
@@ -156,7 +181,7 @@ class Keyframe implements KeyframeObject {
   id: string;
   type: AnimType;
   color: string;
-  scale: number;
+  scale: { x: number; y: number };
   position: { x: number; y: number };
   time: number;
   rotation: number;
@@ -165,10 +190,10 @@ class Keyframe implements KeyframeObject {
     this.id = keyframe.id;
     this.type = keyframe.type;
     this.color = keyframe.color;
-    this.scale = keyframe.scale;
+    this.scale = keyframe.scale ?? { x: 1, y: 1 };
     this.position = keyframe.position;
     this.time = keyframe.time;
-    this.rotation = keyframe.rotation
+    this.rotation = keyframe.rotation ?? 0;
   }
 }
 

@@ -16,7 +16,7 @@ export interface KeyframeObject {
   id: string;
   type: AnimType;
   color: string;
-  scale: number;
+  scale: { x: number; y: number };
   rotation: number;
   position: { x: number; y: number };
   time: number;
@@ -52,9 +52,10 @@ interface Grammar {
   animType: AnimType;
   color: string;
   size: number;
-  scale: number;
+  float: number;
   time: number;
   position: { x: number; y: number };
+  scale: { x: number; y: number };
   arr: Array<string>;
 
   leftBracket: "[";
@@ -142,7 +143,7 @@ const language = P.createLanguage<Grammar>({
   positionExpr: (l) => makePair("position", l.position),
   animationExpr: (l) => makePair("animation", l.arr),
   scaleExpression: (l) => makePair("scale", l.scale),
-  rotationExpression: (l) => makePair("rotation", l.scale),
+  rotationExpression: (l) => makePair("rotation", l.float),
 
   id: (l) => P.regexp(/[a-zA-Z0-9]+/),
   shapeType: (l) => P.alt(P.string("square"), P.string("circle"), P.string("triangle")),
@@ -161,7 +162,7 @@ const language = P.createLanguage<Grammar>({
       P.string("black").result("#000000")
     ),
   size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
-  scale: (l) => P.digits.map((d) => parseFloat(d)),
+  float: (l) => P.digits.map((d) => parseFloat(d)),
   time: (l) =>
     P.regexp(/[0-9]+/)
       .skip(P.string("s"))
@@ -175,6 +176,16 @@ const language = P.createLanguage<Grammar>({
         return { x: parseInt(x), y: parseInt(y) };
       })
       .skip(l.rightBracket),
+  
+  scale: (l) =>
+    l.leftBracket
+      .trim(P.optWhitespace)
+      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
+      .map(([x, y, ...rest]) => {
+        return { x: parseFloat(x), y: parseFloat(y) };
+      })
+      .skip(l.rightBracket),
+
 
   arr: (l) =>
     l.leftBracket
@@ -220,6 +231,6 @@ position: [5,2]
 time: 5s
 `;
 
-language.expr.tryParse(teste) //?
+// language.expr.tryParse(teste) //?
 
 export { language };

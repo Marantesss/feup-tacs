@@ -112,7 +112,7 @@ Keyframe:
   id: 1
   type: slerp
   color: red
-  scale: 1
+  scale: [1,1]
   position: [30,30]
   rotation: 90
   time: 2s
@@ -121,7 +121,8 @@ Keyframe:
   id: 2
   type: lerp
   color: green
-  scale: 2
+  scale: [1, 2]
+  rotation: 720
   position: [87,233]
   time: 5s
 
@@ -129,7 +130,7 @@ Keyframe:
   id: 3
   type: lerp
   color: green
-  scale: 2
+  scale: [2,2]
   position: [535,286]
   time: 2s
   
@@ -137,7 +138,7 @@ Keyframe:
   id: 4
   type: lerp
   color: #123
-  scale: 4
+  scale: [3,4]
   position: [786,345]
   time: 3s
 `;
