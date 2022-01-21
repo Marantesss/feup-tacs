@@ -176,7 +176,7 @@ const language = P.createLanguage<Grammar>({
         return { x: parseInt(x), y: parseInt(y) };
       })
       .skip(l.rightBracket),
-  
+
   scale: (l) =>
     l.leftBracket
       .trim(P.optWhitespace)

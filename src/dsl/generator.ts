@@ -1,8 +1,8 @@
 import { Keyframe, Shape } from "./animator";
 
 class Generator {
-  private generateShape(shape: Shape): string {
-    return `
+    private generateShape(shape: Shape): string {
+        return `
       {
         id: '${shape.id}',
         type: '${shape.type}',
@@ -14,25 +14,28 @@ class Generator {
         activeKeyframe: 0,
         scale: { x: ${shape.scale.x}, y: ${shape.scale.y} },
         scale0: { x: ${shape.scale0.x}, y: ${shape.scale0.y} },
+        rotation: '${shape.rotation}',
+        rotation0: '${shape.rotation0}',
         color0: '${shape.color0}',
         position0: { x: ${shape.position0.x}, y: ${shape.position0.y} }
       }`.replace(/\s/g, "");
-  }
+    }
 
-  private generateKeyframes(keyframe: Keyframe): string {
-    return `
+    private generateKeyframes(keyframe: Keyframe): string {
+        return `
       {
         id: '${keyframe.id}',
         type: '${keyframe.type}',
         color: '${keyframe.color}',
         position: { x: ${keyframe.position.x}, y: ${keyframe.position.y} },
-        scale: ${keyframe.scale},
+        scale: { x: ${keyframe.scale.x}, y: ${keyframe.scale.y} },
+        rotation: '${keyframe.rotation}',
         time: ${keyframe.time}
       }`.replace(/\s/g, "");
-  }
+    }
 
-  public generate(shapes: Array<Shape>, keyframes: Map<string, Keyframe>): string {
-    return `\
+    public generate(shapes: Array<Shape>, keyframes: Map<string, Keyframe>): string {
+        return `\
 const shapes = [
   ${shapes.map(shape => this.generateShape(shape)).join(',\n  ')}
 ];
@@ -45,7 +48,7 @@ const animator = (canvasId) => {
 
   const obj = {};
 
-  obj.animate = (timestamp) => {
+  obj.animate = function(timestamp) {
     const now = timestamp || new Date().getTime();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -77,12 +80,17 @@ const animator = (canvasId) => {
       let runtime = now - shape.startTime;
       let progress = runtime / (currentAnimation.time * 1000);
       progress = Math.min(progress, 1);
-  
-      shape.position.x = shape.position0.x + (currentAnimation.position.x - shape.position0.x) * progress;
-      shape.position.y = shape.position0.y + (currentAnimation.position.y - shape.position0.y) * progress;
-      shape.scale = shape.scale0 + (currentAnimation.scale - shape.scale0) * progress;
+
+      shape.position = {
+        x: shape.position0.x + (currentAnimation.position.x - shape.position0.x) * progress,
+        y: shape.position0.y + (currentAnimation.position.y - shape.position0.y) * progress
+      };
+      shape.scale = {
+        x: shape.scale0.x + (currentAnimation.scale.x - shape.scale0.x) * progress,
+        y: shape.scale0.y + (currentAnimation.scale.y - shape.scale0.y) * progress
+      };
       shape.rotation = shape.rotation0 + (currentAnimation.rotation - shape.rotation0) * progress;
-  
+
       const ah = parseInt(shape.color0.replace(/#/g, ''), 16),
         ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
         bh = parseInt(currentAnimation.color.replace(/#/g, ''), 16),
@@ -90,20 +98,21 @@ const animator = (canvasId) => {
         rr = ar + progress * (br - ar),
         rg = ag + progress * (bg - ag),
         rb = ab + progress * (bb - ab);
-  
+
         shape.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
-  
+
       if (shape.activeKeyframe === shape.animation.length - 1) {
         return;
       }
-  
+
       if (progress >= 1) {
         shape.position0.x = shape.position.x;
         shape.position0.y = shape.position.y;
-        shape.scale0 = shape.scale;
+        shape.scale0.x = shape.scale.x;
+        shape.scale0.y = shape.scale.y;
         shape.rotation0 = shape.rotation;
         shape.color0 = shape.color;
-  
+
         if (shape.activeKeyframe < shape.animation.length - 1) {
           shape.startTime = now;
           shape.activeKeyframe++;
@@ -115,7 +124,7 @@ const animator = (canvasId) => {
   const drawTriangle = (triangle) => {
     ctx.save();
     ctx.translate(triangle.position.x, triangle.position.y);
-    ctx.scale(triangle.scale, triangle.scale);
+    ctx.scale(triangle.scale.x, triangle.scale.y);
     ctx.rotate(triangle.rotation * Math.PI / 180);
 
     ctx.beginPath();
@@ -131,7 +140,7 @@ const animator = (canvasId) => {
   const drawCircle = (circle) => {
     ctx.save();
     ctx.translate(circle.position.x, circle.position.y);
-    ctx.scale(circle.scale, circle.scale);
+    ctx.scale(circle.scale.x, circle.scale.y);
     ctx.rotate(circle.rotation * Math.PI / 180);
 
     ctx.beginPath();
@@ -145,7 +154,7 @@ const animator = (canvasId) => {
   const drawSquare = (square) => {
     ctx.save();
     ctx.translate(square.position.x, square.position.y);
-    ctx.scale(square.scale, square.scale);
+    ctx.scale(square.scale.x, square.scale.y);
     ctx.rotate(square.rotation * Math.PI / 180);
 
     ctx.beginPath();
@@ -160,9 +169,9 @@ const animator = (canvasId) => {
 }
 
 const myAnimator = animator('canvas');
-myAnimator.animate();
+window.requestAnimationFrame((timestamp) => myAnimator.animate(timestamp));
 `
-  }
+    }
 }
 
 const generator = new Generator()

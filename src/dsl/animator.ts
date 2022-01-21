@@ -69,7 +69,7 @@ abstract class Shape implements ShapeObject {
     if (this.animation.length === 0) {
       return
     }
-    
+
     const currentAnimation = animations.get(
       this.animation[this.activeKeyframe]
     );
