@@ -111,6 +111,7 @@ You can find more information below!
   - `opacity` could be replaced with alpha value in `color` property
 - Accept new animation types (for now we are just using keyframe animations)
 - Provide more informative errors and warnings directly in the editor
+- Support comments on language
 - :sparkles: 3D canvas :sparkles:
 
 ### Running the application
