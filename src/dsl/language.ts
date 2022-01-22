@@ -86,8 +86,8 @@ const makeKeyframeObject = ([object, body]): KeyframeObject => {
 };
 
 const makeLanguageOutput = (result: Array<any>) => {
-  const shapes = result.filter(({ scale }) => !scale);
-  const keyframes = result.filter(({ scale }) => scale);
+  const shapes = result.filter(({ time }) => !time && time !== 0);
+  const keyframes = result.filter(({ time }) => time || time === 0);
 
   return {
     shapes,

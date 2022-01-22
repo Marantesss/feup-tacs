@@ -29,8 +29,8 @@ class Generator {
         id: '${keyframe.id}',
         type: '${keyframe.type}',
         color: '${keyframe.color}',
-        position: { x: ${keyframe.position.x}, y: ${keyframe.position.y} },
-        scale: { x: ${keyframe.scale.x}, y: ${keyframe.scale.y} },
+        position: { x: ${keyframe.position?.x}, y: ${keyframe.position?.y} },
+        scale: { x: ${keyframe.scale?.x}, y: ${keyframe.scale?.y} },
         rotation: ${keyframe.rotation},
         opacity: ${keyframe.opacity},
         time: ${keyframe.time}
@@ -79,35 +79,37 @@ const animator = (canvasId) => {
 
   const update = (now) => {
     shapes.forEach(shape => {
-      const currentAnimation = keyframes.get(shape.animation[shape.activeKeyframe])
+      const { time, type, position: {x, y}, scale, rotation, opacity, color } = keyframes.get(shape.animation[shape.activeKeyframe])
       let runtime = now - shape.startTime;
-      let progress = runtime / (currentAnimation.time * 1000);
+      let progress = time ? runtime / (time * 1000) : 1;
       progress = Math.min(progress, 1);
 
-      if (currentAnimation.type === "slerp") {
+      if (type === "slerp") {
         progress = (Math.sin(progress * Math.PI - Math.PI / 2) + 1) / 2;
       }
 
-      shape.position = {
-        x: shape.position0.x + (currentAnimation.position.x - shape.position0.x) * progress,
-        y: shape.position0.y + (currentAnimation.position.y - shape.position0.y) * progress
-      };
-      shape.scale = {
-        x: shape.scale0.x + (currentAnimation.scale.x - shape.scale0.x) * progress,
-        y: shape.scale0.y + (currentAnimation.scale.y - shape.scale0.y) * progress
-      };
-      shape.rotation = shape.rotation0 + (currentAnimation.rotation - shape.rotation0) * progress;
-      shape.opacity = shape.opacity0 + (currentAnimation.opacity - shape.opacity0) * progress;
+      shape.position = x && y ? {
+        x: shape.position0.x + (x - shape.position0.x) * progress,
+        y: shape.position0.y + (y - shape.position0.y) * progress
+      } : shape.position;
+      shape.scale = scale ? {
+        x: shape.scale0.x + (scale.x - shape.scale0.x) * progress,
+        y: shape.scale0.y + (scale.y - shape.scale0.y) * progress
+      } : shape.scale;
+      shape.rotation = rotation ? shape.rotation0 + (rotation - shape.rotation0) * progress : shape.rotation;
+      shape.opacity = opacity ? shape.opacity0 + (opacity - shape.opacity0) * progress : shape.opacity;
 
-      const ah = parseInt(shape.color0.replace(/#/g, ''), 16),
-        ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
-        bh = parseInt(currentAnimation.color.replace(/#/g, ''), 16),
-        br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff,
-        rr = ar + progress * (br - ar),
-        rg = ag + progress * (bg - ag),
-        rb = ab + progress * (bb - ab);
+      if (color && color !== "undefined") {
+        const ah = parseInt(shape.color0.replace(/#/g, ''), 16),
+          ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
+          bh = parseInt(color.replace(/#/g, ''), 16),
+          br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff,
+          rr = ar + progress * (br - ar),
+          rg = ag + progress * (bg - ag),
+          rb = ab + progress * (bb - ab);
 
         shape.color = '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+      }
 
       if (shape.activeKeyframe === shape.animation.length - 1) {
         return;

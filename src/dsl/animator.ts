@@ -59,10 +59,10 @@ abstract class Shape implements ShapeObject {
     this.scale0 = { ...this.scale };
     this.rotation = 0;
     this.rotation0 = this.rotation;
-    this.position0 = { ...shape.position };
+    this.position0 = { ...this.position };
     this.startTime = 0;
     this.activeKeyframe = 0;
-    this.color0 = shape.color;
+    this.color0 = this.color;
     this.opacity = 100;
     this.opacity0 = this.opacity;
   }
@@ -74,49 +74,53 @@ abstract class Shape implements ShapeObject {
       return
     }
 
-    const currentAnimation = animations.get(
+    const { time, type, position, scale, rotation, opacity, color } = animations.get(
       this.animation[this.activeKeyframe]
     );
+
     let runtime = now - this.startTime;
-    let progress = runtime / (currentAnimation.time * 1000);
+    let progress = time ? runtime / (time * 1000) : 1;
     progress = Math.min(progress, 1);
 
-    if (currentAnimation.type === "slerp") {
+    if (type === "slerp") {
       progress = (Math.sin(progress * Math.PI - Math.PI / 2) + 1) / 2;
     }
 
-    this.position = {
+    this.position = position ? {
       x:
         this.position0.x +
-        (currentAnimation.position.x - this.position0.x) * progress,
+        (position.x - this.position0.x) * progress,
       y:
         this.position0.y +
-        (currentAnimation.position.y - this.position0.y) * progress
-    };
-    this.scale = {
-      x: this.scale0.x + (currentAnimation.scale.x - this.scale0.x) * progress,
-      y: this.scale0.y + (currentAnimation.scale.y - this.scale0.y) * progress
-    };
-    this.rotation =
-      this.rotation0 + (currentAnimation.rotation - this.rotation0) * progress;
-    this.opacity =
-      this.opacity0 + (currentAnimation.opacity - this.opacity0) * progress;
+        (position.y - this.position0.y) * progress
+    } : this.position;
+    this.scale = scale ? {
+      x: this.scale0.x + (scale.x - this.scale0.x) * progress,
+      y: this.scale0.y + (scale.y - this.scale0.y) * progress
+    } : this.scale;
+    this.rotation = rotation ?
+      this.rotation0 + (rotation - this.rotation0) * progress : this.rotation;
+    this.opacity = opacity ?
+      this.opacity0 + (opacity - this.opacity0) * progress : this.opacity;
 
-    const ah = parseInt(this.color0.replace(/#/g, ""), 16),
-      ar = ah >> 16,
-      ag = (ah >> 8) & 0xff,
-      ab = ah & 0xff,
-      bh = parseInt(currentAnimation.color.replace(/#/g, ""), 16),
-      br = bh >> 16,
-      bg = (bh >> 8) & 0xff,
-      bb = bh & 0xff,
-      rr = ar + progress * (br - ar),
-      rg = ag + progress * (bg - ag),
-      rb = ab + progress * (bb - ab);
 
-    this.color =
-      "#" +
-      (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1);
+    if (color) {
+      const ah = parseInt(this.color0.replace(/#/g, ""), 16),
+        ar = ah >> 16,
+        ag = (ah >> 8) & 0xff,
+        ab = ah & 0xff,
+        bh = parseInt(color.replace(/#/g, ""), 16),
+        br = bh >> 16,
+        bg = (bh >> 8) & 0xff,
+        bb = bh & 0xff,
+        rr = ar + progress * (br - ar),
+        rg = ag + progress * (bg - ag),
+        rb = ab + progress * (bb - ab);
+
+      this.color =
+        "#" +
+        (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1);
+    }
 
     if (this.activeKeyframe === this.animation.length - 1) {
       return;
@@ -205,11 +209,11 @@ class Keyframe implements KeyframeObject {
     this.id = keyframe.id;
     this.type = keyframe.type;
     this.color = keyframe.color;
-    this.scale = keyframe.scale ?? { x: 1, y: 1 };
+    this.scale = keyframe.scale;
     this.position = keyframe.position;
     this.time = keyframe.time;
-    this.rotation = keyframe.rotation ?? 0;
-    this.opacity = keyframe.opacity ?? 100;
+    this.rotation = keyframe.rotation;
+    this.opacity = keyframe.opacity;
   }
 }
 
