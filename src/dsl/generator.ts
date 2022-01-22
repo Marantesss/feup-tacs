@@ -14,12 +14,12 @@ class Generator {
         activeKeyframe: 0,
         scale: { x: ${shape.scale.x}, y: ${shape.scale.y} },
         scale0: { x: ${shape.scale0.x}, y: ${shape.scale0.y} },
-        rotation: '${shape.rotation}',
-        rotation0: '${shape.rotation0}',
+        rotation: ${shape.rotation},
+        rotation0: ${shape.rotation0},
         color0: '${shape.color0}',
         position0: { x: ${shape.position0.x}, y: ${shape.position0.y} },
-        opacity: '${shape.opacity}',
-        opacity0: '${shape.opacity0}'
+        opacity: ${shape.opacity},
+        opacity0: ${shape.opacity0}
       }`.replace(/\s/g, "");
   }
 
@@ -31,8 +31,8 @@ class Generator {
         color: '${keyframe.color}',
         position: { x: ${keyframe.position.x}, y: ${keyframe.position.y} },
         scale: { x: ${keyframe.scale.x}, y: ${keyframe.scale.y} },
-        rotation: '${keyframe.rotation}',
-        opacity: '${keyframe.opacity}',
+        rotation: ${keyframe.rotation},
+        opacity: ${keyframe.opacity},
         time: ${keyframe.time}
       }`.replace(/\s/g, "");
   }
