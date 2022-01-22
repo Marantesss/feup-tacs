@@ -2,6 +2,8 @@
 
 This is a simple web-based application that allows you to write animations with an external Domain Specific Language, and then generate JS code to place on your own web apps.
 
+The live application can be found [here](https://loving-elion-58a47c.netlify.app/)
+
 ## Cool Features
 
 - **Code Editor:** Get compiling errors and warnings directly on the editor & console
