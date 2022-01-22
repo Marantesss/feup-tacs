@@ -2,7 +2,9 @@
 
 This is a simple web-based application that allows you to write animations with an external Domain Specific Language, and then generate JS code to place on your own web apps.
 
-The live application can be found [here](https://loving-elion-58a47c.netlify.app/)
+The live application can be found [here](https://loving-elion-58a47c.netlify.app/)!
+
+There are also some demo animations available [here](https://github.com/Marantesss/feup-tacs/tree/master/demos)!
 
 ## Cool Features
 
@@ -55,6 +57,7 @@ Shape:
 - `size` - the size of the shape (in pixels)
 - `animation` - simple array with keyframe animations `id`s that will be executed in order.
 - `position` - simple array [x, y] coordinates, which will be the initial canvas position where the shape will be in
+
 ## Used technologies
 
 - [TypeScript](https://www.typescriptlang.org/) because using plain JS would be too easy!
@@ -62,7 +65,7 @@ Shape:
 - [React / CRA](https://github.com/facebook/create-react-app) as a frontend framework for faster application development.
 - [Tailwind CSS](https://tailwindcss.com/) as a style library for faster :sparkles: styling :sparkles: and component building!
 
-## How to Contribute
+## How to Run and Contribute
 
 This project is a very simple React Application, so it should be easy to navigate around.
 
@@ -75,6 +78,8 @@ You can find more information below!
 ```bash
 .
 ├── craco.config.js           # CRA config
+├── demos                     # text files with demo animations
+│   └── ...
 ├── package.json              # Project dependencies
 ├── public                    # public assets
 │   └── ...
@@ -93,6 +98,20 @@ You can find more information below!
 ├── tsconfig.json             # TypeScript Config
 └── yarn.lock
 ```
+
+### Future Work
+
+- More customizable shapes (hexagons, and so on)
+- Relative transformations:
+  - Use translation vectors instead of absolute canvas coordinates
+- Accept new measure units:
+  - `time` could be represented in milliseconds
+  - `size` could be represented with `rem`s or `em`s or `cm`s
+  - `color` could also be represented in RGB(A) format
+  - `opacity` could be replaced with alpha value in `color` property
+- Accept new animation types (for now we are just using keyframe animations)
+- Provide more informative errors and warnings directly in the editor
+- :sparkles: 3D canvas :sparkles:
 
 ### Running the application
 
