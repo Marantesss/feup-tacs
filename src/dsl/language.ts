@@ -20,6 +20,7 @@ export interface KeyframeObject {
   rotation: number;
   position: { x: number; y: number };
   time: number;
+  opacity: number;
 }
 
 export interface LanguageOutput {
@@ -46,6 +47,7 @@ interface Grammar {
   animationExpr: Array<string>;
   scaleExpression: Array<string>;
   rotationExpression: Array<string>;
+  opacityExpression: Array<string>;
 
   id: string;
   shapeType: ShapeType;
@@ -56,6 +58,7 @@ interface Grammar {
   time: number;
   position: { x: number; y: number };
   scale: { x: number; y: number };
+  percentage: number;
   arr: Array<string>;
 
   leftBracket: "[";
@@ -130,7 +133,8 @@ const language = P.createLanguage<Grammar>({
       l.timeExpr,
       l.scaleExpression,
       l.positionExpr,
-      l.rotationExpression
+      l.rotationExpression,
+      l.opacityExpression
     ),
 
   // Key-Value expressions (syntax analysis)
@@ -144,6 +148,7 @@ const language = P.createLanguage<Grammar>({
   animationExpr: (l) => makePair("animation", l.arr),
   scaleExpression: (l) => makePair("scale", l.scale),
   rotationExpression: (l) => makePair("rotation", l.float),
+  opacityExpression: (l) => makePair("opacity", l.percentage),
 
   id: (l) => P.regexp(/[a-zA-Z0-9]+/),
   shapeType: (l) => P.alt(P.string("square"), P.string("circle"), P.string("triangle")),
@@ -185,6 +190,11 @@ const language = P.createLanguage<Grammar>({
         return { x: parseFloat(x), y: parseFloat(y) };
       })
       .skip(l.rightBracket),
+
+  percentage: (l) =>
+    P.regexp(/0*(100|[0-9]{1,2})/)
+      .skip(P.string("%"))
+      .map((d) => parseFloat(d)),
 
 
   arr: (l) =>

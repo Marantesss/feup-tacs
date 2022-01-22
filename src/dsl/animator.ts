@@ -44,6 +44,8 @@ abstract class Shape implements ShapeObject {
   rotation0: number;
   color0: string;
   position0: { x: number; y: number };
+  opacity: number;
+  opacity0: number;
 
   constructor(shape: ShapeObject) {
     this.id = shape.id;
@@ -61,6 +63,8 @@ abstract class Shape implements ShapeObject {
     this.startTime = 0;
     this.activeKeyframe = 0;
     this.color0 = shape.color;
+    this.opacity = 100;
+    this.opacity0 = this.opacity;
   }
 
   public abstract draw(ctx);
@@ -95,6 +99,8 @@ abstract class Shape implements ShapeObject {
     };
     this.rotation =
       this.rotation0 + (currentAnimation.rotation - this.rotation0) * progress;
+    this.opacity =
+      this.opacity0 + (currentAnimation.opacity - this.opacity0) * progress;
 
     const ah = parseInt(this.color0.replace(/#/g, ""), 16),
       ar = ah >> 16,
@@ -122,6 +128,7 @@ abstract class Shape implements ShapeObject {
       this.scale0 = this.scale;
       this.rotation0 = this.rotation;
       this.color0 = this.color;
+      this.opacity0 = this.opacity;
 
       if (this.activeKeyframe < this.animation.length - 1) {
         this.startTime = now;
@@ -137,6 +144,7 @@ class Circle extends Shape {
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale.x, this.scale.y);
     ctx.rotate((this.rotation * Math.PI) / 180);
+    ctx.globalAlpha = this.opacity / 100;
 
     ctx.beginPath();
     ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2, true);
@@ -153,6 +161,7 @@ class Square extends Shape {
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale.x, this.scale.y);
     ctx.rotate((this.rotation * Math.PI) / 180);
+    ctx.globalAlpha = this.opacity / 100;
 
     ctx.beginPath();
     ctx.rect(-this.size / 2, -this.size / 2, this.size, this.size);
@@ -169,6 +178,7 @@ class Triangle extends Shape {
     ctx.translate(this.position.x, this.position.y);
     ctx.scale(this.scale.x, this.scale.y);
     ctx.rotate((this.rotation * Math.PI) / 180);
+    ctx.globalAlpha = this.opacity / 100;
 
     ctx.beginPath();
     ctx.moveTo(-this.size / 2, (Math.sqrt(3) / 6) * this.size);
@@ -189,6 +199,7 @@ class Keyframe implements KeyframeObject {
   position: { x: number; y: number };
   time: number;
   rotation: number;
+  opacity: number;
 
   constructor(keyframe: KeyframeObject) {
     this.id = keyframe.id;
@@ -198,6 +209,7 @@ class Keyframe implements KeyframeObject {
     this.position = keyframe.position;
     this.time = keyframe.time;
     this.rotation = keyframe.rotation ?? 0;
+    this.opacity = keyframe.opacity ?? 100;
   }
 }
 

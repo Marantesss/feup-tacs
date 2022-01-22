@@ -1,8 +1,8 @@
 import { Keyframe, Shape } from "./animator";
 
 class Generator {
-    private generateShape(shape: Shape): string {
-        return `
+  private generateShape(shape: Shape): string {
+    return `
       {
         id: '${shape.id}',
         type: '${shape.type}',
@@ -17,12 +17,14 @@ class Generator {
         rotation: '${shape.rotation}',
         rotation0: '${shape.rotation0}',
         color0: '${shape.color0}',
-        position0: { x: ${shape.position0.x}, y: ${shape.position0.y} }
+        position0: { x: ${shape.position0.x}, y: ${shape.position0.y} },
+        opacity: '${shape.opacity}',
+        opacity0: '${shape.opacity0}'
       }`.replace(/\s/g, "");
-    }
+  }
 
-    private generateKeyframes(keyframe: Keyframe): string {
-        return `
+  private generateKeyframes(keyframe: Keyframe): string {
+    return `
       {
         id: '${keyframe.id}',
         type: '${keyframe.type}',
@@ -30,12 +32,13 @@ class Generator {
         position: { x: ${keyframe.position.x}, y: ${keyframe.position.y} },
         scale: { x: ${keyframe.scale.x}, y: ${keyframe.scale.y} },
         rotation: '${keyframe.rotation}',
+        opacity: '${keyframe.opacity}',
         time: ${keyframe.time}
       }`.replace(/\s/g, "");
-    }
+  }
 
-    public generate(shapes: Array<Shape>, keyframes: Map<string, Keyframe>): string {
-        return `\
+  public generate(shapes: Array<Shape>, keyframes: Map<string, Keyframe>): string {
+    return `\
 const shapes = [
   ${shapes.map(shape => this.generateShape(shape)).join(',\n  ')}
 ];
@@ -94,6 +97,7 @@ const animator = (canvasId) => {
         y: shape.scale0.y + (currentAnimation.scale.y - shape.scale0.y) * progress
       };
       shape.rotation = shape.rotation0 + (currentAnimation.rotation - shape.rotation0) * progress;
+      shape.opacity = shape.opacity0 + (currentAnimation.opacity - shape.opacity0) * progress;
 
       const ah = parseInt(shape.color0.replace(/#/g, ''), 16),
         ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff,
@@ -116,6 +120,7 @@ const animator = (canvasId) => {
         shape.scale0.y = shape.scale.y;
         shape.rotation0 = shape.rotation;
         shape.color0 = shape.color;
+        shape.opacity0 = shape.opacity;
 
         if (shape.activeKeyframe < shape.animation.length - 1) {
           shape.startTime = now;
@@ -130,6 +135,7 @@ const animator = (canvasId) => {
     ctx.translate(triangle.position.x, triangle.position.y);
     ctx.scale(triangle.scale.x, triangle.scale.y);
     ctx.rotate(triangle.rotation * Math.PI / 180);
+    ctx.globalAlpha = triangle.opacity / 100;
 
     ctx.beginPath();
     ctx.moveTo(-triangle.size / 2, Math.sqrt(3) / 6 * triangle.size);
@@ -146,6 +152,7 @@ const animator = (canvasId) => {
     ctx.translate(circle.position.x, circle.position.y);
     ctx.scale(circle.scale.x, circle.scale.y);
     ctx.rotate(circle.rotation * Math.PI / 180);
+    ctx.globalAlpha = circle.opacity / 100;
 
     ctx.beginPath();
     ctx.arc(0, 0, circle.size / 2, 0, Math.PI * 2, true);
@@ -160,6 +167,7 @@ const animator = (canvasId) => {
     ctx.translate(square.position.x, square.position.y);
     ctx.scale(square.scale.x, square.scale.y);
     ctx.rotate(square.rotation * Math.PI / 180);
+    ctx.globalAlpha = square.opacity / 100;
 
     ctx.beginPath();
     ctx.rect(-square.size / 2, -square.size / 2, square.size, square.size);
@@ -175,7 +183,7 @@ const animator = (canvasId) => {
 const myAnimator = animator('canvas');
 window.requestAnimationFrame((timestamp) => myAnimator.animate(timestamp));
 `
-    }
+  }
 }
 
 const generator = new Generator()
