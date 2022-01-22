@@ -24,6 +24,7 @@ Keyframe:
   scale: [1, 1]
   rotation: 90
   position: [30,30]
+  opacity: 100%
   time: 2s
 ```
 
@@ -32,7 +33,8 @@ Keyframe:
 - `color` - a simple color in hexadecimal form (i.e. #rrggbb) or in plain english text (i.e. red, orange, blue, ...)
 - `scale` - simple array `[x, y]` coordinates, the final `x` and `y` scale of the shape where this animation will be applied to
 - `position` - simple array `[x, y]` coordinates, which will be the canvas position where the shape will be in after the animation is over
-- `rotation` - rotation angle (clockwise and in degrees) 
+- `rotation` - rotation angle (clockwise and in degrees)
+- `opacity` - opacity of the shape in percentage (0-100%)
 - `time` - the amount of time (in seconds) that will take for a shape to be in this keyframe state
 
 ### Shapes
