@@ -40,11 +40,11 @@ const App = () => {
       setAnnotation(
         result
           ? {
-              row: result.index.line - 1 ,
-              column: result.index.column - 1,
-              type: "error",
-              text: `Expected one of ${result.expected}`,
-            }
+            row: result.index.line - 1,
+            column: result.index.column - 1,
+            type: "error",
+            text: `Expected one of ${result.expected}`,
+          }
           : {}
       );
     }
@@ -85,62 +85,106 @@ const App = () => {
 
 const defaultCode = `\
 Shape:
-  id: ola
-  type: circle
-  color: #f48024
+  id: tri1
+  type: triangle
+  color: blue
   position: [200,200]
   size: 100px
-  animation: [1, 3]
+  animation: [ 1 ]
 
 Shape:
-  id: quadrado1
-  type: square
-  color: purple
-  position:                  [50,50]
-  size: 45px
-  animation: [   1 ,     2     ]
-  
-Shape:
-  id: quadrado2
+  id: tri2
   type: triangle
-  color: #435672
-  position:                  [100,100]
-  size: 35px
-  animation: [ 2 , 4    ]
+  color: blue
+  position: [230,150]
+  size: 100px
+  animation: [ 2 ]
+
+Shape:
+  id: tri3
+  type: triangle
+  color: red
+  position: [140,200]
+  size: 100px
+  animation: [ 3 ]
+
+Shape:
+  id: tri4
+  type: triangle
+  color: red
+  position: [110,150]
+  size: 100px
+  animation: [ 4 ]
+
+Shape:
+  id: tri5
+  type: triangle
+  color: green
+  position: [140,100]
+  size: 100px
+  animation: [ 5 ]
+
+Shape:
+  id: tri6
+  type: triangle
+  color: green
+  position: [200,100]
+  size: 100px
+  animation: [ 6 ]
 
 Keyframe:
   id: 1
-  type: slerp
-  color: red
+  type: lerp
+  color: blue
   scale: [1,1]
-  position: [30,30]
+  position: [200,200]
   rotation: 90
-  time: 2s
+  time: 0s
 
 Keyframe:
   id: 2
   type: lerp
-  color: green
-  scale: [1, 2]
-  rotation: 720
-  position: [87,233]
-  time: 5s
+  color: blue
+  scale: [1,1]
+  rotation: 30
+  position: [230,150]
+  time: 0s
 
 Keyframe:
   id: 3
   type: lerp
-  color: green
-  scale: [2,2]
-  position: [535,286]
-  time: 2s
-  
+  color: red
+  scale: [1,1]
+  position: [140,200]
+  rotation: 30
+  time: 0s
+
 Keyframe:
   id: 4
   type: lerp
-  color: #123
-  scale: [3,4]
-  position: [786,345]
-  time: 3s
+  color: red
+  scale: [1,1]
+  rotation: 90
+  position: [110,150]
+  time: 0s
+
+Keyframe:
+  id: 5
+  type: lerp
+  color: green
+  scale: [1,1]
+  position: [140,100]
+  rotation: 30
+  time: 0s
+
+Keyframe:
+  id: 6
+  type: lerp
+  color: green
+  scale: [1,1]
+  rotation: 90
+  position: [200,100]
+  time: 0s
 `;
 
 export default App;
