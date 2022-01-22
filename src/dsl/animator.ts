@@ -77,6 +77,10 @@ abstract class Shape implements ShapeObject {
     let progress = runtime / (currentAnimation.time * 1000);
     progress = Math.min(progress, 1);
 
+    if (currentAnimation.type === "slerp") {
+      progress = (Math.sin(progress * Math.PI - Math.PI / 2) + 1) / 2;
+    }
+
     this.position = {
       x:
         this.position0.x +

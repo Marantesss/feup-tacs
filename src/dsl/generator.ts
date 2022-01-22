@@ -81,6 +81,10 @@ const animator = (canvasId) => {
       let progress = runtime / (currentAnimation.time * 1000);
       progress = Math.min(progress, 1);
 
+      if (currentAnimation.type === "slerp") {
+        progress = (Math.sin(progress * Math.PI - Math.PI / 2) + 1) / 2;
+      }
+
       shape.position = {
         x: shape.position0.x + (currentAnimation.position.x - shape.position0.x) * progress,
         y: shape.position0.y + (currentAnimation.position.y - shape.position0.y) * progress
