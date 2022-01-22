@@ -27,11 +27,23 @@ const Editor = ({
     <>
       <div
         style={{ height: "10%" }}
-        className="flex justify-center items-center"
+        className="flex justify-around items-center"
       >
+        <div className="text-gray-500">
+        Examples on{' '}
+        <a
+          href="https://github.com/Marantesss/feup-tacs/tree/master/demos"
+          target="_blank"
+          rel="noreferrer"
+          className="text-indigo-500 hover:underline"
+          >
+          GitHub
+        </a>
+          </div>
+
         <button
           className={cx(
-            "p-4 w-32 bg-gradient-to-r  hover:opacity-80 rounded-xl text-white",
+            "p-4 w-32 bg-gradient-to-r  hover:opacity-80 rounded-xl text-white mx-12",
             {
               "from-red-300 to-red-500": isError,
               "from-green-300 to-green-500": isSuccess,
