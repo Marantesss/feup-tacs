@@ -168,10 +168,7 @@ const language = P.createLanguage<Grammar>({
     ),
   size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
   float: (l) => P.regexp(/^\d+(\.\d+)?/).map((d) => parseFloat(d)),
-  time: (l) =>
-    P.regexp(/[0-9]+/)
-      .skip(P.string("s"))
-      .map((d) => parseFloat(d)),
+  time: (l) => l.float.skip(P.string("s")),
 
   position: (l) =>
     l.leftBracket
