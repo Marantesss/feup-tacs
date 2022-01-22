@@ -1,0 +1,131 @@
+Shape:
+  id: rect1
+  type: square
+  color: black
+  position: [20,200]
+  size: 10px
+  animation: [ 1, 4, 7 ]
+
+Shape:
+  id: rect2
+  type: square
+  color: black
+  position: [820,200]
+  size: 10px
+  animation: [ 2, 5, 9, 11 ]
+
+Shape:
+  id: circ
+  type: circle
+  color: #999999
+  position: [400,300]
+  size: 20px
+  animation: [ 3, 6, 8, 10, 12 ]
+
+Keyframe:
+  id: 1
+  type: lerp
+  color: black
+  scale: [1,10]
+  position: [20,200]
+  rotation: 0
+  time: 0s
+
+Keyframe:
+  id: 2
+  type: lerp
+  color: black
+  scale: [1,10]
+  position: [820,200]
+  rotation: 0
+  time: 0s
+
+Keyframe:
+  id: 3
+  type: lerp
+  color: #999999
+  scale: [1,1]
+  position: [400,300]
+  rotation: 0
+  time: 0s
+
+Keyframe:
+  id: 4
+  type: slerp
+  color: black
+  scale: [1,10]
+  position: [20,100]
+  rotation: 0
+  time: 1s
+
+Keyframe:
+  id: 5
+  type: lerp
+  color: black
+  scale: [1,10]
+  position: [820,200]
+  rotation: 0
+  time: 2s
+
+Keyframe:
+  id: 6
+  type: lerp
+  color: #999999
+  scale: [1,1]
+  position: [35,100]
+  rotation: 0
+  time: 1s
+
+Keyframe:
+  id: 7
+  type: slerp
+  color: black
+  scale: [1,10]
+  position: [20,200]
+  rotation: 0
+  time: 2s
+
+Keyframe:
+  id: 8
+  type: lerp
+  color: #999999
+  scale: [1,1]
+  position: [200,10]
+  rotation: 0
+  time: 0.5s
+
+Keyframe:
+  id: 9
+  type: slerp
+  color: black
+  scale: [1,10]
+  position: [820,300]
+  rotation: 0
+  time: 1s
+
+Keyframe:
+  id: 10
+  type: lerp
+  color: #999999
+  scale: [1,1]
+  position: [805,300]
+  rotation: 0
+  time: 1.5s
+
+Keyframe:
+  id: 11
+  type: slerp
+  color: black
+  scale: [1,10]
+  position: [820,200]
+  rotation: 0
+  time: 1s
+
+Keyframe:
+  id: 12
+  type: lerp
+  color: #999999
+  scale: [1,1]
+  position: [220,500]
+  rotation: 0
+  time: 1.5s
