@@ -1,0 +1,209 @@
+Shape:
+  id: tri1
+  type: triangle
+  color: blue
+  position: [200,200]
+  size: 100px
+  animation: [ 1, 7, 13, 1, 7, 13, 1, 7, 13 ]
+
+Shape:
+  id: tri2
+  type: triangle
+  color: blue
+  position: [230,150]
+  size: 100px
+  animation: [ 2, 8, 14, 2, 8, 14, 2, 8, 14 ]
+
+Shape:
+  id: tri3
+  type: triangle
+  color: red
+  position: [140,200]
+  size: 100px
+  animation: [ 3, 9, 15, 3, 9, 15, 3, 9, 15 ]
+
+Shape:
+  id: tri4
+  type: triangle
+  color: red
+  position: [110,150]
+  size: 100px
+  animation: [ 4, 10, 16, 4, 10, 16, 4, 10, 16 ]
+
+Shape:
+  id: tri5
+  type: triangle
+  color: green
+  position: [140,100]
+  size: 100px
+  animation: [ 5, 11, 17, 5, 11, 17, 5, 11, 17 ]
+
+Shape:
+  id: tri6
+  type: triangle
+  color: green
+  position: [200,100]
+  size: 100px
+  animation: [ 6, 12, 18, 6, 12, 18, 6, 12, 18 ]
+
+Keyframe:
+  id: 1
+  type: slerp
+  color: blue
+  scale: [1,1]
+  position: [200,200]
+  rotation: 90
+  time: 2s
+
+Keyframe:
+  id: 2
+  type: slerp
+  color: blue
+  scale: [1,1]
+  rotation: 30
+  position: [230,150]
+  time: 2s
+
+Keyframe:
+  id: 3
+  type: slerp
+  color: red
+  scale: [1,1]
+  position: [140,200]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 4
+  type: slerp
+  color: red
+  scale: [1,1]
+  rotation: 90
+  position: [110,150]
+  time: 2s
+
+Keyframe:
+  id: 5
+  type: slerp
+  color: green
+  scale: [1,1]
+  position: [140,100]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 6
+  type: slerp
+  color: green
+  scale: [1,1]
+  rotation: 90
+  position: [200,100]
+  time: 2s
+
+Keyframe:
+  id: 7
+  type: slerp
+  color: green
+  scale: [1,1]
+  position: [200,200]
+  rotation: 90
+  time: 2s
+
+Keyframe:
+  id: 8
+  type: slerp
+  color: green
+  scale: [1,1]
+  rotation: 30
+  position: [230,150]
+  time: 2s
+
+Keyframe:
+  id: 9
+  type: slerp
+  color: blue
+  scale: [1,1]
+  position: [140,200]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 10
+  type: slerp
+  color: blue
+  scale: [1,1]
+  rotation: 90
+  position: [110,150]
+  time: 2s
+
+Keyframe:
+  id: 11
+  type: slerp
+  color: red
+  scale: [1,1]
+  position: [140,100]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 12
+  type: slerp
+  color: red
+  scale: [1,1]
+  rotation: 90
+  position: [200,100]
+  time: 2s
+
+Keyframe:
+  id: 13
+  type: slerp
+  color: red
+  scale: [1,1]
+  position: [200,200]
+  rotation: 90
+  time: 2s
+
+Keyframe:
+  id: 14
+  type: slerp
+  color: red
+  scale: [1,1]
+  rotation: 30
+  position: [230,150]
+  time: 2s
+
+Keyframe:
+  id: 15
+  type: slerp
+  color: green
+  scale: [1,1]
+  position: [140,200]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 16
+  type: slerp
+  color: green
+  scale: [1,1]
+  rotation: 90
+  position: [110,150]
+  time: 2s
+
+Keyframe:
+  id: 17
+  type: slerp
+  color: blue
+  scale: [1,1]
+  position: [140,100]
+  rotation: 30
+  time: 2s
+
+Keyframe:
+  id: 18
+  type: slerp
+  color: blue
+  scale: [1,1]
+  rotation: 90
+  position: [200,100]
+  time: 2s
