@@ -167,28 +167,21 @@ const language = P.createLanguage<Grammar>({
       P.string("black").result("#000000")
     ),
   size: (l) => P.digits.skip(P.string("px")).map((d) => parseFloat(d)),
-  float: (l) => P.digits.map((d) => parseFloat(d)),
-  time: (l) =>
-    P.regexp(/[0-9]+/)
-      .skip(P.string("s"))
-      .map((d) => parseFloat(d)),
+  float: (l) => P.regexp(/^\d+(\.\d+)?/).map((d) => parseFloat(d)),
+  time: (l) => l.float.skip(P.string("s")),
 
   position: (l) =>
     l.leftBracket
       .trim(P.optWhitespace)
-      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
-      .map(([x, y, ...rest]) => {
-        return { x: parseInt(x), y: parseInt(y) };
-      })
+      .then(P.digits.trim(P.optWhitespace).sepBy(P.string(",")))
+      .map(([x, y, ...rest]) => ({ x: parseInt(x), y: parseInt(y) }))
       .skip(l.rightBracket),
 
   scale: (l) =>
     l.leftBracket
       .trim(P.optWhitespace)
-      .then(l.id.trim(P.optWhitespace).sepBy(P.string(",")))
-      .map(([x, y, ...rest]) => {
-        return { x: parseFloat(x), y: parseFloat(y) };
-      })
+      .then(l.float.trim(P.optWhitespace).sepBy(P.string(",")))
+      .map(([x, y, ...rest]) => ({x, y}))
       .skip(l.rightBracket),
 
   percentage: (l) =>
