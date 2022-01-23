@@ -1,0 +1,88 @@
+Shape:
+  id: squa
+  type: square
+  color: red
+  position: [200, 200]
+  size: 100px
+  animation: [1, 2, 3, 2, 4, 2, 3, 2, 4, 2, 3, 2, 4]
+
+Shape:
+  id: circ1
+  type: circle
+  color: red
+  position: [164, 164]
+  size: 100px
+  animation: [5, 6, 5, 7, 5, 6, 5, 7, 5, 6, 5, 7]
+
+Shape:
+  id: circ2
+  type: circle
+  color: red
+  position: [236, 164]
+  size: 100px
+  animation: [8, 9, 8, 10, 8, 9, 8, 10, 8, 9, 8, 10]
+
+Keyframe:
+  id: 1
+  rotation: 45
+  time: 0s
+
+Keyframe:
+  id: 2
+  type: slerp
+  scale: [1.5, 1.5]
+  time: 0.2s
+
+Keyframe:
+  id: 3
+  type: slerp
+  scale: [1, 1]
+  time: 0.2s
+
+Keyframe:
+  id: 4
+  type: slerp
+  scale: [1, 1]
+  time: 0.5s
+
+Keyframe:
+  id: 5
+  type: slerp
+  position: [147, 147]
+  scale: [1.5, 1.5]
+  time: 0.2s
+
+Keyframe:
+  id: 6
+  type: slerp
+  position: [164, 164]
+  scale: [1, 1]
+  time: 0.2s
+
+Keyframe:
+  id: 7
+  type: slerp
+  position: [164, 164]
+  scale: [1, 1]
+  time: 0.5s
+
+Keyframe:
+  id: 8
+  type: slerp
+  position: [253, 147]
+  scale: [1.5, 1.5]
+  time: 0.2s
+
+Keyframe:
+  id: 9
+  type: slerp
+  position: [236, 164]
+  scale: [1, 1]
+  time: 0.2s
+
+Keyframe:
+  id: 10
+  type: slerp
+  position: [236, 164]
+  scale: [1, 1]
+  time: 0.5s
