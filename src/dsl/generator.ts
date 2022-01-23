@@ -79,6 +79,10 @@ const animator = (canvasId) => {
 
   const update = (now) => {
     shapes.forEach(shape => {
+      if (shape.animation.length === 0) {
+        return
+      }
+
       const { time, type, position: {x, y}, scale, rotation, opacity, color } = keyframes.get(shape.animation[shape.activeKeyframe])
       let runtime = now - shape.startTime;
       let progress = time ? runtime / (time * 1000) : 1;
