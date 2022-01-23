@@ -1,0 +1,205 @@
+Shape:
+  id: back
+  type: square
+  color: #1c2541
+  position: [400, 200]
+  size: 2000px
+  animation: [ ]
+
+Shape:
+  id: sun1
+  type: circle
+  color: #f59542
+  position: [0, 200]
+  size: 160px
+  animation: [ ]
+
+Shape:
+  id: sun2
+  type: circle
+  color: #ffd100
+  position: [0, 200]
+  size: 150px
+  animation: [ ]
+
+Shape:
+  id: mercury
+  type: circle
+  color: #c9a227
+  position: [150, 200]
+  size: 45px
+  animation: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 15]
+
+Shape:
+  id: venus
+  type: circle
+  color: #ff9b85
+  position: [250, 200]
+  size: 54px
+  animation: [3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 16]
+
+Shape:
+  id: earth
+  type: circle
+  color: #0496ff
+  position: [350, 200]
+  size: 66px
+  animation: [5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 5, 6, 17]
+
+Shape:
+  id: mars
+  type: circle
+  color: #db3a34
+  position: [450, 200]
+  size: 48px
+  animation: [7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 18]
+
+Shape:
+  id: jupiter
+  type: circle
+  color: #ff9100
+  position: [550, 200]
+  size: 84px
+  animation: [9, 10, 9, 10, 9, 10, 9, 10, 9, 10, 9, 19]
+
+Shape:
+  id: saturn
+  type: circle
+  color: #4281a4
+  position: [650, 200]
+  size: 75px
+  animation: [11, 12, 11, 12, 11, 12, 11, 12, 11, 12, 20]
+
+Shape:
+  id: uranus
+  type: circle
+  color: #004e89
+  position: [750,200]
+  size: 66px
+  animation: [13, 14, 13, 14, 13, 14, 13, 14, 13, 14, 21]
+
+Keyframe:
+  id: 1
+  type: slerp
+  position: [150, 180]
+  time: 4s
+
+Keyframe:
+  id: 2
+  type: slerp
+  position: [150, 220]
+  time: 4s
+
+Keyframe:
+  id: 3
+  type: slerp
+  position: [250, 172]
+  time: 4.5s
+
+Keyframe:
+  id: 4
+  type: slerp
+  position: [250, 228]
+  time: 4.5s
+
+Keyframe:
+  id: 5
+  type: slerp
+  position: [350, 163]
+  time: 5s
+
+Keyframe:
+  id: 6
+  type: slerp
+  position: [350, 237]
+  time: 5s
+
+Keyframe:
+  id: 7
+  type: slerp
+  position: [450, 155]
+  time: 5.5s
+
+Keyframe:
+  id: 8
+  type: slerp
+  position: [450, 245]
+  time: 5.5s
+
+Keyframe:
+  id: 9
+  type: slerp
+  position: [550, 145]
+  time: 7s
+
+Keyframe:
+  id: 10
+  type: slerp
+  position: [550, 255]
+  time: 7s
+
+Keyframe:
+  id: 11
+  type: slerp
+  position: [650, 135]
+  time: 7.5s
+
+Keyframe:
+  id: 12
+  type: slerp
+  position: [650, 265]
+  time: 7.5s
+
+Keyframe:
+  id: 13
+  type: slerp
+  position: [750, 125]
+  time: 8s
+
+Keyframe:
+  id: 14
+  type: slerp
+  position: [750, 275]
+  time: 8s
+
+Keyframe:
+  id: 15
+  type: slerp
+  position: [150, 200]
+  time: 2s
+
+Keyframe:
+  id: 16
+  type: slerp
+  position: [250, 200]
+  time: 2s
+
+Keyframe:
+  id: 17
+  type: slerp
+  position: [350, 200]
+  time: 2s
+
+Keyframe:
+  id: 18
+  type: slerp
+  position: [450, 200]
+  time: 2s
+
+Keyframe:
+  id: 19
+  type: slerp
+  position: [550, 200]
+  time: 2s
+
+Keyframe:
+  id: 20
+  type: slerp
+  position: [650, 200]
+  time: 2s
+
+Keyframe:
+  id: 21
+  type: slerp
+  position: [750, 200]
+  time: 2s
