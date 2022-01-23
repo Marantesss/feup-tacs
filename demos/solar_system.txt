@@ -2,7 +2,7 @@ Shape:
   id: back
   type: square
   color: #1c2541
-  position: [400, 200]
+  position: [1000, 1000]
   size: 2000px
   animation: [ ]
 
@@ -12,7 +12,7 @@ Shape:
   color: #f59542
   position: [0, 200]
   size: 160px
-  animation: [ ]
+  animation: [22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23]
 
 Shape:
   id: sun2
@@ -52,7 +52,7 @@ Shape:
   color: #db3a34
   position: [450, 200]
   size: 48px
-  animation: [7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 18]
+  animation: [7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 7, 8, 18]
 
 Shape:
   id: jupiter
@@ -203,3 +203,17 @@ Keyframe:
   type: slerp
   position: [750, 200]
   time: 2s
+
+Keyframe:
+  id: 22
+  type: slerp
+  scale: [0.9375, 0.9375]
+  opacity: 100%
+  time: 1s
+
+Keyframe:
+  id: 23
+  type: slerp
+  scale: [1, 1]
+  opacity: 50%
+  time: 1s
