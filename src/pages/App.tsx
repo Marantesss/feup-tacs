@@ -88,7 +88,7 @@ Shape:
   id: tri1
   type: triangle
   color: blue
-  position: [200, 200]
+  position: [200, 350]
   size: 100px
   animation: [1]
 
@@ -96,7 +96,7 @@ Shape:
   id: tri2
   type: triangle
   color: blue
-  position: [229, 150]
+  position: [229, 300]
   size: 100px
   animation: [2]
 
@@ -104,7 +104,7 @@ Shape:
   id: tri3
   type: triangle
   color: red
-  position: [111, 150]
+  position: [111, 300]
   size: 100px
   animation: [1]
 
@@ -112,7 +112,7 @@ Shape:
   id: tri4
   type: triangle
   color: red
-  position: [140, 200]
+  position: [140, 350]
   size: 100px
   animation: [2]
 
@@ -120,7 +120,7 @@ Shape:
   id: tri5
   type: triangle
   color: green
-  position: [141, 99]
+  position: [141, 249]
   size: 100px
   animation: [2]
 
@@ -128,9 +128,73 @@ Shape:
   id: tri6
   type: triangle
   color: green
-  position: [199, 99]
+  position: [199, 249]
   size: 100px
   animation: [1]
+
+Shape:
+  id: tri7
+  type: triangle
+  color: blue
+  position: [289, 197]
+  size: 100px
+  animation: [1]
+
+Shape:
+  id: tri8
+  type: triangle
+  color: blue
+  position: [318, 147]
+  size: 100px
+  animation: [2]
+
+Shape:
+  id: tri9
+  type: triangle
+  color: red
+  position: [200, 147]
+  size: 100px
+  animation: [1]
+
+Shape:
+  id: tri10
+  type: triangle
+  color: red
+  position: [229, 197]
+  size: 100px
+  animation: [2]
+
+Shape:
+  id: tri11
+  type: triangle
+  color: green
+  position: [230, 96]
+  size: 100px
+  animation: [2]
+
+Shape:
+  id: tri12
+  type: triangle
+  color: green
+  position: [288, 96]
+  size: 100px
+  animation: [1]
+
+Shape:
+  id: tri13
+  type: triangle
+  color: blue
+  position: [289, 299]
+  size: 100px
+  animation: [1]
+
+Shape:
+  id: tri14
+  type: triangle
+  color: blue
+  position: [318, 249]
+  size: 100px
+  animation: [2]
 
 Keyframe:
   id: 1
