@@ -88,102 +88,58 @@ Shape:
   id: tri1
   type: triangle
   color: blue
-  position: [200,200]
+  position: [200, 200]
   size: 100px
-  animation: [ 1 ]
+  animation: [1]
 
 Shape:
   id: tri2
   type: triangle
   color: blue
-  position: [230,150]
+  position: [229, 150]
   size: 100px
-  animation: [ 2 ]
+  animation: [2]
 
 Shape:
   id: tri3
   type: triangle
   color: red
-  position: [140,200]
+  position: [111, 150]
   size: 100px
-  animation: [ 3 ]
+  animation: [1]
 
 Shape:
   id: tri4
   type: triangle
   color: red
-  position: [110,150]
+  position: [140, 200]
   size: 100px
-  animation: [ 4 ]
+  animation: [2]
 
 Shape:
   id: tri5
   type: triangle
   color: green
-  position: [140,100]
+  position: [141, 99]
   size: 100px
-  animation: [ 5 ]
+  animation: [2]
 
 Shape:
   id: tri6
   type: triangle
   color: green
-  position: [200,100]
+  position: [199, 99]
   size: 100px
-  animation: [ 6 ]
+  animation: [1]
 
 Keyframe:
   id: 1
-  type: lerp
-  color: blue
-  scale: [1,1]
-  position: [200,200]
   rotation: 90
   time: 0s
 
 Keyframe:
   id: 2
-  type: lerp
-  color: blue
-  scale: [1,1]
   rotation: 30
-  position: [230,150]
-  time: 0s
-
-Keyframe:
-  id: 3
-  type: lerp
-  color: red
-  scale: [1,1]
-  position: [140,200]
-  rotation: 30
-  time: 0s
-
-Keyframe:
-  id: 4
-  type: lerp
-  color: red
-  scale: [1,1]
-  rotation: 90
-  position: [110,150]
-  time: 0s
-
-Keyframe:
-  id: 5
-  type: lerp
-  color: green
-  scale: [1,1]
-  position: [140,100]
-  rotation: 30
-  time: 0s
-
-Keyframe:
-  id: 6
-  type: lerp
-  color: green
-  scale: [1,1]
-  rotation: 90
-  position: [200,100]
   time: 0s
 `;
 
